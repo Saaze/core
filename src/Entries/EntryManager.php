@@ -1,0 +1,169 @@
+<?php
+
+namespace Saaze\Entries;
+
+use Saaze\Entries\Entry;
+use Saaze\Collections\Collection;
+use Symfony\Component\Finder\Finder;
+
+class EntryManager
+{
+    /**
+     * @var Collection
+     */
+    protected $collection;
+
+    /**
+     * @param Collection $collection
+     */
+    public function __construct(Collection $collection)
+    {
+        $this->collection = $collection;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEntries()
+    {
+        if (empty($this->entries)) {
+            $this->loadEntries();
+        }
+
+        $this->sortEntries();
+
+        return $this->entries;
+    }
+
+    protected function sortEntries()
+    {
+        if (empty($this->collection->data()['sort'])) {
+            return;
+        }
+
+        $sort      = $this->collection->data()['sort'];
+        $field     = $sort['field'] ?? 'title';
+        $direction = $sort['direction'] ?? 'asc';
+
+        usort($this->entries, function ($a, $b) use ($field, $direction) {
+            if (strtolower($direction) === 'asc') {
+                return $a->data()[$field] <=> $b->data()[$field];
+            }
+
+            return $b->data()[$field] <=> $a->data()[$field];
+        });
+    }
+
+    /**
+     * @param string $slug
+     * @return \Saaze\Entries\Entry|null
+     */
+    public function getEntry($slug)
+    {
+        if (empty($this->entries[$slug])) {
+            $entryPath = SAAZE_CONTENT_PATH . DIRECTORY_SEPARATOR . $this->collection->slug() . DIRECTORY_SEPARATOR . "{$slug}.yml";
+            $entry = $this->loadEntry($entryPath);
+
+            if ($entry) {
+                $this->entries[$slug] = $entry;
+            }
+        }
+
+        return $this->entries[$slug] ?? null;
+    }
+
+    /**
+     * @return array
+     */
+    protected function loadEntries()
+    {
+        $paths = (new Finder())->in(SAAZE_CONTENT_PATH . DIRECTORY_SEPARATOR . $this->collection->slug())->files()->name('*.yml');
+
+        foreach ($paths as $file) {
+            $this->loadEntry($file->getPathname());
+        }
+
+        return $this->entries;
+    }
+
+    /**
+     * @param string $filePath
+     * @return \Saaze\Entries\Entry|null
+     */
+    protected function loadEntry($filePath)
+    {
+        if (!file_exists($filePath)) {
+            return null;
+        }
+
+        $entry = new Entry($filePath);
+
+        $this->entries[$entry->slug()] = $entry;
+
+        return $entry;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEntriesForTemplate()
+    {
+        $entries      = $this->getEntries();
+        $totalEntries = count($entries);
+
+        $page       = $_GET['page'] ?? 1;
+        $page       = filter_var($page, FILTER_SANITIZE_NUMBER_INT);
+        $perPage    = $_GET['per_page'] ?? 10;
+        $perPage    = filter_var($perPage, FILTER_SANITIZE_NUMBER_INT);
+
+        if ($page < 1) {
+            $page = 1;
+        }
+        if ($perPage < 1) {
+            $perPage = 1;
+        }
+
+        $totalPages = ceil($totalEntries / $perPage);
+        $prevPage   = $page > 1 ? $page - 1 : $page;
+        $nextPage   = $page < $totalPages ? $page + 1 : $totalPages;
+
+        $pageEntries    = [];
+        $pageIndex      = $page - 1;
+        $chunkedEntries = array_chunk($entries, $perPage);
+        if (isset($chunkedEntries[$pageIndex])) {
+            $pageEntries = $chunkedEntries[$pageIndex];
+        }
+
+        $pageEntries = array_map(function ($entry) {
+            return $this->getEntryForTemplate($entry);
+        }, $pageEntries);
+
+        return [
+            'currentPage'  => $page,
+            'prevPage'     => $prevPage,
+            'nextPage'     => $nextPage,
+            'prevUrl'      => $page != $prevPage ? $this->collection->indexRoute() . "?page={$prevPage}" : '',
+            'nextUrl'      => $page != $nextPage ? $this->collection->indexRoute() . "?page={$nextPage}" : '',
+            'perPage'      => $perPage,
+            'totalEntries' => $totalEntries,
+            'totalPages'   => $totalPages,
+            'entries'      => $pageEntries,
+        ];
+    }
+
+    /**
+     * @param Entry $entry
+     * @return array
+     */
+    public function getEntryForTemplate(Entry $entry)
+    {
+        $entry->setCollection($this->collection);
+        $entryData = $entry->data();
+
+        $entryData['url']     = $entry->url();
+        $entryData['content'] = $entry->content();
+        $entryData['excerpt'] = $entry->excerpt();
+
+        return $entryData;
+    }
+}
