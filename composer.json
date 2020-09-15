@@ -1,6 +1,6 @@
 {
     "name": "saaze/framework",
-    "description": "An all-inclusive, flat-file CMS for personal websites and blogs",
+    "description": "The framework for Saaze CMS",
     "license": "MIT",
     "authors": [
         {
