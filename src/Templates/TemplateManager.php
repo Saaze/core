@@ -11,9 +11,10 @@ class TemplateManager
 {
     /**
      * @param Collection $collection
+     * @param int $page
      * @return string
      */
-    public function renderCollection(Collection $collection)
+    public function renderCollection(Collection $collection, $page)
     {
         $entryManager = new EntryManager($collection);
 
@@ -22,9 +23,12 @@ class TemplateManager
             $template = $collection->slug() . DIRECTORY_SEPARATOR . 'index';
         }
 
+        $page    = filter_var($page, FILTER_SANITIZE_NUMBER_INT);
+        $perPage = filter_var(SAAZE_ENTRIES_PER_PAGE, FILTER_SANITIZE_NUMBER_INT);
+
         return $this->render($template, [
             'collection' => $collection->data(),
-            'entries'    => $entryManager->getEntriesForTemplate(),
+            'entries'    => $entryManager->getEntriesForTemplate($page, $perPage),
         ]);
     }
 

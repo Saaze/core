@@ -61,6 +61,7 @@ class Saaze
         foreach ($collections as $collection) {
             if ($collection->indexRoute()) {
                 $routes->add("{$collection->slug()}_index", new Routing\Route($collection->indexRoute(), ['collection' => $collection->slug()]));
+                $routes->add("{$collection->slug()}_page", new Routing\Route($collection->indexRoute() . '/page/{page}', ['collection' => $collection->slug()]));
             }
             if ($collection->entryRoute()) {
                 $routes->add("{$collection->slug()}_entry", new Routing\Route($collection->entryRoute(), ['collection' => $collection->slug()]));
@@ -90,7 +91,8 @@ class Saaze
         }
 
         if (empty($route['slug'])) {
-            return new Response($this->templateManager->renderCollection($collection));
+            $page = $route['page'] ?? 1;
+            return new Response($this->templateManager->renderCollection($collection, $page));
         }
 
         $entryManager = new EntryManager($collection);

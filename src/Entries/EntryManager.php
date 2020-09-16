@@ -122,17 +122,14 @@ class EntryManager
     }
 
     /**
+     * @param int $page
+     * @param int $perPage
      * @return array
      */
-    public function getEntriesForTemplate()
+    public function getEntriesForTemplate($page, $perPage)
     {
         $entries      = $this->getEntries();
         $totalEntries = count($entries);
-
-        $page       = $_GET['page'] ?? 1;
-        $page       = filter_var($page, FILTER_SANITIZE_NUMBER_INT);
-        $perPage    = $_GET['per_page'] ?? 10;
-        $perPage    = filter_var($perPage, FILTER_SANITIZE_NUMBER_INT);
 
         if ($page < 1) {
             $page = 1;
@@ -160,8 +157,8 @@ class EntryManager
             'currentPage'  => $page,
             'prevPage'     => $prevPage,
             'nextPage'     => $nextPage,
-            'prevUrl'      => $page != $prevPage ? $this->collection->indexRoute() . "?page={$prevPage}" : '',
-            'nextUrl'      => $page != $nextPage ? $this->collection->indexRoute() . "?page={$nextPage}" : '',
+            'prevUrl'      => $page != $prevPage ? $this->collection->indexRoute() . "/page/{$prevPage}" : '',
+            'nextUrl'      => $page != $nextPage ? $this->collection->indexRoute() . "/page/{$nextPage}" : '',
             'perPage'      => $perPage,
             'totalEntries' => $totalEntries,
             'totalPages'   => $totalPages,
