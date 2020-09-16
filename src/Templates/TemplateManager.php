@@ -18,8 +18,8 @@ class TemplateManager
         $entryManager = new EntryManager($collection);
 
         $template = 'collection';
-        if ($this->templateExists($collection->slug(). '/index')) {
-            $template = $collection->slug() . '/index';
+        if ($this->templateExists($collection->slug() . DIRECTORY_SEPARATOR . 'index')) {
+            $template = $collection->slug() . DIRECTORY_SEPARATOR . 'index';
         }
 
         return $this->render($template, [
@@ -40,8 +40,8 @@ class TemplateManager
 
         if (!empty($entryData['template']) && $this->templateExists($entryData['template'])) {
             $template = $entryData['template'];
-        } elseif ($this->templateExists($entry->getCollection()->slug() . '/entry')) {
-            $template = $entry->getCollection()->slug() . '/entry';
+        } elseif ($this->templateExists($entry->getCollection()->slug() . DIRECTORY_SEPARATOR . 'entry')) {
+            $template = $entry->getCollection()->slug() . DIRECTORY_SEPARATOR . 'entry';
         }
 
         return $this->render($template, [
