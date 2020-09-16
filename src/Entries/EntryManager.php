@@ -14,6 +14,11 @@ class EntryManager
     protected $collection;
 
     /**
+     * @var array
+     */
+    protected $entries = [];
+
+    /**
      * @param Collection $collection
      */
     public function __construct(Collection $collection)
@@ -28,6 +33,9 @@ class EntryManager
     {
         if (empty($this->entries)) {
             $this->loadEntries();
+        }
+        if (empty($this->entries)) {
+            return $this->entries;
         }
 
         $this->sortEntries();
@@ -60,8 +68,13 @@ class EntryManager
      */
     public function getEntry($slug)
     {
+        $collectionDir = SAAZE_CONTENT_PATH . DIRECTORY_SEPARATOR . $this->collection->slug();
+        if (!is_dir($collectionDir)) {
+            return null;
+        }
+
         if (empty($this->entries[$slug])) {
-            $entryPath = SAAZE_CONTENT_PATH . DIRECTORY_SEPARATOR . $this->collection->slug() . DIRECTORY_SEPARATOR . "{$slug}.yml";
+            $entryPath = $collectionDir . DIRECTORY_SEPARATOR . "{$slug}.yml";
             $entry = $this->loadEntry($entryPath);
 
             if ($entry) {
@@ -77,7 +90,12 @@ class EntryManager
      */
     protected function loadEntries()
     {
-        $paths = (new Finder())->in(SAAZE_CONTENT_PATH . DIRECTORY_SEPARATOR . $this->collection->slug())->files()->name('*.yml');
+        $collectionDir = SAAZE_CONTENT_PATH . DIRECTORY_SEPARATOR . $this->collection->slug();
+        if (!is_dir($collectionDir)) {
+            return [];
+        }
+
+        $paths = (new Finder())->in($collectionDir)->files()->name('*.yml');
 
         foreach ($paths as $file) {
             $this->loadEntry($file->getPathname());
