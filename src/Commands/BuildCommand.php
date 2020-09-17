@@ -6,6 +6,7 @@ use Saaze\Entries\Entry;
 use Saaze\Entries\EntryManager;
 use Saaze\Collections\Collection;
 use Saaze\Templates\TemplateManager;
+use Symfony\Component\Finder\Finder;
 use Saaze\Collections\CollectionManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -35,19 +36,17 @@ class BuildCommand extends Command
             $dest = SAAZE_BASE_DIR . DIRECTORY_SEPARATOR . $dest;
         }
 
-        if (!is_dir($dest)) {
-            mkdir($dest, 0777, true);
-        }
-        if (!is_dir($dest)) {
-            $output->writeln("<error>Destination is not a valid directory ({$dest})</error>");
-            return;
-        }
-
         $output->writeln("<info>Building static site in {$dest}...</info>");
+
+        $startTime = microtime(true);
+
+        $this->clearBuildDirectory($dest);
 
         $this->templateManager = new TemplateManager();
         $collectionManager     = new CollectionManager();
         $collections           = $collectionManager->getCollections();
+        $collectionCount = 0;
+        $entryCount      = 0;
 
         foreach ($collections as $collection) {
             $entryManager = new EntryManager($collection);
@@ -55,27 +54,54 @@ class BuildCommand extends Command
             $totalPages   = ceil(count($entries) / SAAZE_ENTRIES_PER_PAGE);
 
             if ($this->buildCollectionIndex($collection, null, $dest)) {
-                $output->writeln("Collection index created {$collection->slug()}");
+                $collectionCount++;
             }
 
             for ($page = 1; $page <= $totalPages; $page++) {
-                if ($this->buildCollectionIndex($collection, $page, $dest)) {
-                    $output->writeln("Collection index created {$collection->slug()} (page {$page})");
-                }
+                $this->buildCollectionIndex($collection, $page, $dest);
             }
 
             foreach ($entries as $entry) {
                 $entry->setCollection($collection);
 
                 if ($this->buildEntry($collection, $entry, $dest)) {
-                    $output->writeln("Entry created {$entry->slug()}");
+                    $entryCount++;
                 }
             }
         }
 
-        $output->writeln("<info>Finished</info>");
+        $endTime     = microtime(true);
+        $elapsedTime = $endTime - $startTime;
+        $timeString  = number_format($elapsedTime, 2) . ' secs';
+        $memString   = $this->humanSize(memory_get_peak_usage());
+
+        $output->writeln("<info>Finished creating {$collectionCount} collections and {$entryCount} entries ({$timeString} / {$memString})</info>");
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * @param string $dest
+     * @return void
+     */
+    private function clearBuildDirectory($dest)
+    {
+        if (!is_dir($dest)) {
+            return;
+        }
+
+        $it    = new \RecursiveDirectoryIterator($dest, \RecursiveDirectoryIterator::SKIP_DOTS);
+        $files = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::CHILD_FIRST);
+
+        foreach ($files as $file) {
+            if ($file->isDir()) {
+                rmdir($file->getRealPath());
+            } else {
+                unlink($file->getRealPath());
+            }
+        }
+
+        rmdir($dest);
     }
 
     /**
@@ -140,5 +166,15 @@ class BuildCommand extends Command
         file_put_contents($entryDir . DIRECTORY_SEPARATOR . 'index.html', $this->templateManager->renderEntry($entry));
 
         return true;
+    }
+
+    /**
+     * @param int $bytes
+     * @return string
+     */
+    private function humanSize($bytes)
+    {
+        $i = floor(log($bytes, 1024));
+        return round($bytes / pow(1024, $i), [0,0,2,2,3][$i]).['B','kB','MB','GB','TB'][$i];
     }
 }
