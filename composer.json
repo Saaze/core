@@ -1,6 +1,6 @@
 {
-    "name": "saaze/framework",
-    "description": "The framework for Saaze CMS",
+    "name": "saaze/core",
+    "description": "The core package for Saaze CMS",
     "license": "MIT",
     "authors": [
         {
