@@ -17,10 +17,22 @@ class CollectionManager
     public function getCollections()
     {
         if (empty($this->collections)) {
-            return $this->loadCollections();
+            $this->loadCollections();
+        }
+        if (empty($this->collections)) {
+            return $this->collections;
         }
 
+        $this->sortCollections();
+
         return $this->collections;
+    }
+
+    protected function sortCollections()
+    {
+        uasort($this->collections, function ($a, $b) {
+            return count(explode('/', $b->entryRoute())) <=> count(explode('/', $a->entryRoute()));
+        });
     }
 
     /**
