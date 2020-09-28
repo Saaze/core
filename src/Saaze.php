@@ -2,12 +2,14 @@
 
 namespace Saaze;
 
+use Mimey\MimeTypes;
 use Symfony\Component\Routing;
-use Saaze\Collections\CollectionManager;
 use Saaze\Entries\EntryManager;
 use Saaze\Templates\TemplateManager;
+use Saaze\Collections\CollectionManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class Saaze
@@ -31,6 +33,12 @@ class Saaze
     public function run()
     {
         $request = Request::createFromGlobals();
+
+        if ($this->isStaticFile($request->getPathInfo())) {
+            $response = $this->handleStaticFile($request->getPathInfo());
+            return $response->send();
+        }
+
         $routes = new Routing\RouteCollection();
         $routes->addCollection($this->getCollectionRoutes());
 
@@ -72,6 +80,37 @@ class Saaze
         }
 
         return $routes;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isStaticFile($pathInfo)
+    {
+        return !is_dir(SAAZE_PUBLIC_PATH . $pathInfo) && file_exists(SAAZE_PUBLIC_PATH . $pathInfo);
+    }
+
+    /**
+     * @param string $pathInfo
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    protected function handleStaticFile($pathInfo)
+    {
+        $response = new BinaryFileResponse(SAAZE_PUBLIC_PATH . $pathInfo);
+
+        $ext = pathinfo($pathInfo, PATHINFO_EXTENSION);
+        if (!$ext) {
+            return $response;
+        }
+
+        $mimes    = new MimeTypes();
+        $mimeType = $mimes->getMimeType($ext);
+
+        if ($mimeType) {
+            $response->headers->set('Content-Type', $mimeType);
+        }
+
+        return $response;
     }
 
     /**
