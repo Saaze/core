@@ -68,14 +68,16 @@ class Saaze
 
         foreach ($collections as $collection) {
             if ($collection->indexRoute()) {
-                $routes->add("{$collection->slug()}_index", new Routing\Route($collection->indexRoute(), ['collection' => $collection->slug()]));
+                if ($collection->indexIsEntry()) {
+                    $routes->add("{$collection->slug()}_index_entry", new Routing\Route($collection->indexRoute(), ['collection' => $collection->slug(), 'slug' => 'index']));
+                } else {
+                    $routes->add("{$collection->slug()}_index", new Routing\Route($collection->indexRoute(), ['collection' => $collection->slug()]));
+                }
+
                 $routes->add("{$collection->slug()}_page", new Routing\Route($collection->indexRoute() . '/page/{page}', ['collection' => $collection->slug()]));
             }
             if ($collection->entryRoute()) {
                 $routes->add("{$collection->slug()}_entry", new Routing\Route($collection->entryRoute(), ['collection' => $collection->slug()]));
-            }
-            if ($collection->entryRoute() === '/{slug}') {
-                $routes->add("{$collection->slug()}_entry_index", new Routing\Route('/', ['collection' => $collection->slug(), 'slug' => 'index']));
             }
         }
 

@@ -3,6 +3,7 @@
 namespace Saaze\Collections;
 
 use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Finder\Finder;
 
 class Collection
 {
@@ -65,6 +66,18 @@ class Collection
     public function indexRoute()
     {
         return $this->data['index_route'] ?? null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function indexIsEntry()
+    {
+        return (bool) (new Finder())
+            ->in(SAAZE_CONTENT_PATH . DIRECTORY_SEPARATOR . $this->slug())
+            ->files()
+            ->name('index.yml')
+            ->count();
     }
 
     /**
