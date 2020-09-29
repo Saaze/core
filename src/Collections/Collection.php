@@ -76,7 +76,7 @@ class Collection
         return (bool) (new Finder())
             ->in(SAAZE_CONTENT_PATH . DIRECTORY_SEPARATOR . $this->slug())
             ->files()
-            ->name('index.yml')
+            ->name('index.md')
             ->count();
     }
 

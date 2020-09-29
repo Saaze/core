@@ -79,7 +79,7 @@ class Entry
      */
     public function slug()
     {
-        return basename($this->filePath, '.yml');
+        return basename($this->filePath, '.md');
     }
 
     /**

@@ -74,7 +74,7 @@ class EntryManager
         }
 
         if (empty($this->entries[$slug])) {
-            $entryPath = $collectionDir . DIRECTORY_SEPARATOR . "{$slug}.yml";
+            $entryPath = $collectionDir . DIRECTORY_SEPARATOR . "{$slug}.md";
             $entry = $this->loadEntry($entryPath);
 
             if ($entry) {
@@ -95,7 +95,7 @@ class EntryManager
             return [];
         }
 
-        $paths = (new Finder())->in($collectionDir)->files()->name('*.yml');
+        $paths = (new Finder())->in($collectionDir)->files()->name('*.md');
 
         foreach ($paths as $file) {
             $this->loadEntry($file->getPathname());
