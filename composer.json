@@ -13,6 +13,11 @@
             "Saaze\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Saaze\\Tests\\": "tests/"
+        }
+    },
     "require": {
         "erusev/parsedown": "^1.7",
         "jenssegers/blade": "^1.3",
@@ -23,6 +28,9 @@
         "symfony/process": "^5.1",
         "symfony/routing": "^5.1",
         "symfony/yaml": "^5.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
     },
     "config": {
         "sort-packages": true
