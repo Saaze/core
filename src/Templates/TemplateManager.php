@@ -81,7 +81,7 @@ class TemplateManager
      * @param array $data
      * @return string
      */
-    public function render($template, $data)
+    protected function render($template, $data)
     {
         $blade = new Blade(SAAZE_TEMPLATES_PATH, SAAZE_CACHE_PATH . DIRECTORY_SEPARATOR . 'blade');
         return $blade->render($template, $data);
@@ -91,7 +91,7 @@ class TemplateManager
      * @param string $template
      * @return boolean
      */
-    public function templateExists($template)
+    protected function templateExists($template)
     {
         return file_exists(SAAZE_TEMPLATES_PATH . DIRECTORY_SEPARATOR . "{$template}.blade.php");
     }
