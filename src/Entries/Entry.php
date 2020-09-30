@@ -87,14 +87,13 @@ class Entry
      */
     public function url()
     {
-        if ($this->slug() === 'index') {
-            return '/';
-        }
         if (!$this->collection) {
             return '';
         }
 
-        return str_replace('{slug}', $this->slug(), $this->collection->entryRoute());
+        $slug = $this->slug() !== 'index' ? $this->slug() : '';
+
+        return rtrim(str_replace('{slug}', $slug, $this->collection->entryRoute()), '/');
     }
 
     /**
