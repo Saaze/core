@@ -1,0 +1,6 @@
+title: Blog
+sort:
+  field: date
+  direction: desc
+index_route: /blog
+entry_route: /blog/{slug}

@@ -1,0 +1,6 @@
+title: Docs
+sort:
+  field: order
+  direction: asc
+index_route: /docs/sub
+entry_route: /docs/sub/{slug}

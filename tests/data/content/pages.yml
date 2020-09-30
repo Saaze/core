@@ -1,0 +1,6 @@
+title: Pages
+sort:
+  field: order
+  direction: asc
+index_route: /
+entry_route: /{slug}
