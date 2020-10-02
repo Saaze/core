@@ -20,9 +20,12 @@ class EntryManagerTest extends TestCase
 
     public function setUp(): void
     {
-        $collectionManager = new CollectionManager();
-        $this->collection = $collectionManager->getCollection('posts');
-        $this->entryManager = new EntryManager($this->collection);
+        parent::setUp();
+
+        $collectionManager  = $this->container->get(CollectionManager::class);
+        $this->collection   = $collectionManager->getCollection('posts');
+        $this->entryManager = $this->container->get(EntryManager::class);
+        $this->entryManager->setCollection($this->collection);
     }
 
     public function testGetEntries()

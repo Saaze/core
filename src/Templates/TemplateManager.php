@@ -5,10 +5,21 @@ namespace Saaze\Templates;
 use Saaze\Entries\Entry;
 use Jenssegers\Blade\Blade;
 use Saaze\Collections\Collection;
-use Saaze\Entries\EntryManager;
+use Saaze\Interfaces\EntryManagerInterface;
+use Saaze\Interfaces\TemplateManagerInterface;
 
-class TemplateManager
+class TemplateManager implements TemplateManagerInterface
 {
+    /**
+     * @var EntryManagerInterface
+     */
+    protected $entryManager;
+
+    public function __construct(EntryManagerInterface $entryManager)
+    {
+        $this->entryManager = $entryManager;
+    }
+
     /**
      * @param Collection $collection
      * @param int $page
@@ -16,7 +27,7 @@ class TemplateManager
      */
     public function renderCollection(Collection $collection, $page)
     {
-        $entryManager = new EntryManager($collection);
+        $this->entryManager->setCollection($collection);
 
         $template = 'collection';
         if ($this->templateExists($collection->slug() . DIRECTORY_SEPARATOR . 'index')) {
@@ -28,7 +39,7 @@ class TemplateManager
 
         return $this->render($template, [
             'collection' => $collection->data(),
-            'entries'    => $entryManager->getEntriesForTemplate($page, $perPage),
+            'entries'    => $this->entryManager->getEntriesForTemplate($page, $perPage),
         ]);
     }
 
@@ -38,9 +49,10 @@ class TemplateManager
      */
     public function renderEntry(Entry $entry)
     {
-        $entryManager = new EntryManager($entry->getCollection());
+        $this->entryManager->setCollection($entry->getCollection());
+
         $entryData = $entry->data();
-        $template = 'entry';
+        $template  = 'entry';
 
         if (!empty($entryData['template']) && $this->templateExists($entryData['template'])) {
             $template = $entryData['template'];
@@ -50,7 +62,7 @@ class TemplateManager
 
         return $this->render($template, [
             'collection' => $entry->getCollection() ? $entry->getCollection()->data() : null,
-            'entry'      => $entryManager->getEntryForTemplate($entry),
+            'entry'      => $this->entryManager->getEntryForTemplate($entry),
         ]);
     }
 

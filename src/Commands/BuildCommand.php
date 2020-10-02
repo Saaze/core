@@ -5,9 +5,10 @@ namespace Saaze\Commands;
 use Saaze\Entries\Entry;
 use Saaze\Entries\EntryManager;
 use Saaze\Collections\Collection;
-use Saaze\Templates\TemplateManager;
-use Symfony\Component\Finder\Finder;
 use Saaze\Collections\CollectionManager;
+use Saaze\Interfaces\CollectionManagerInterface;
+use Saaze\Interfaces\EntryManagerInterface;
+use Saaze\Interfaces\TemplateManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,9 +19,28 @@ class BuildCommand extends Command
     protected static $defaultName = 'build';
 
     /**
-     * @var TemplateManager
+     * @var CollectionManagerInterface
+     */
+    protected $collectionManager;
+
+    /**
+     * @var EntryManagerInterface
+     */
+    protected $entryManager;
+
+    /**
+     * @var TemplateManagerInterface
      */
     protected $templateManager;
+
+    public function __construct(CollectionManagerInterface $collectionManager, EntryManagerInterface $entryManager, TemplateManagerInterface $templateManager)
+    {
+        parent::__construct();
+
+        $this->collectionManager = $collectionManager;
+        $this->entryManager      = $entryManager;
+        $this->templateManager   = $templateManager;
+    }
 
     protected function configure()
     {
@@ -42,16 +62,15 @@ class BuildCommand extends Command
 
         $this->clearBuildDirectory($dest);
 
-        $this->templateManager = new TemplateManager();
-        $collectionManager     = new CollectionManager();
-        $collections           = $collectionManager->getCollections();
+        $collections     = $this->collectionManager->getCollections();
         $collectionCount = 0;
         $entryCount      = 0;
 
         foreach ($collections as $collection) {
-            $entryManager = new EntryManager($collection);
-            $entries      = $entryManager->getEntries();
-            $totalPages   = ceil(count($entries) / SAAZE_ENTRIES_PER_PAGE);
+            $this->entryManager->setCollection($collection);
+
+            $entries    = $this->entryManager->getEntries();
+            $totalPages = ceil(count($entries) / SAAZE_ENTRIES_PER_PAGE);
 
             if ($this->buildCollectionIndex($collection, null, $dest)) {
                 $collectionCount++;

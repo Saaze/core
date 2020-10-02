@@ -2,9 +2,10 @@
 
 namespace Saaze\Collections;
 
+use Saaze\Interfaces\CollectionManagerInterface;
 use Symfony\Component\Finder\Finder;
 
-class CollectionManager
+class CollectionManager implements CollectionManagerInterface
 {
     /**
      * @var array

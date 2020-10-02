@@ -14,7 +14,9 @@ class CollectionManagerTest extends TestCase
 
     public function setUp(): void
     {
-        $this->collectionManager = new CollectionManager();
+        parent::setUp();
+
+        $this->collectionManager = $this->container->get(CollectionManager::class);
     }
 
     public function testGetCollections()

@@ -20,9 +20,12 @@ class EntryTest extends TestCase
 
     public function setUp(): void
     {
-        $collectionManager  = new CollectionManager();
+        parent::setUp();
+
+        $collectionManager  = $this->container->get(CollectionManager::class);
         $collection         = $collectionManager->getCollection('posts');
-        $this->entryManager = new EntryManager($collection);
+        $this->entryManager = $this->container->get(EntryManager::class);
+        $this->entryManager->setCollection($collection);
         $this->entry        = $this->entryManager->getEntry('example-post-1');
         $this->entry->setCollection($collection);
     }
@@ -49,10 +52,11 @@ class EntryTest extends TestCase
 
     public function testUrlIsIndex()
     {
-        $collectionManager  = new CollectionManager();
-        $collection         = $collectionManager->getCollection('docs');
-        $entryManager       = new EntryManager($collection);
-        $entry              = $entryManager->getEntry('index');
+        $collectionManager = $this->container->get(CollectionManager::class);
+        $collection        = $collectionManager->getCollection('docs');
+        $entryManager      = $this->container->get(EntryManager::class);
+        $entryManager->setCollection($collection);
+        $entry             = $entryManager->getEntry('index');
         $entry->setCollection($collection);
 
         $this->assertEquals($collection->indexRoute(), $entry->url());

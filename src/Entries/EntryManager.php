@@ -4,9 +4,10 @@ namespace Saaze\Entries;
 
 use Saaze\Entries\Entry;
 use Saaze\Collections\Collection;
+use Saaze\Interfaces\EntryManagerInterface;
 use Symfony\Component\Finder\Finder;
 
-class EntryManager
+class EntryManager implements EntryManagerInterface
 {
     /**
      * @var Collection
@@ -19,11 +20,13 @@ class EntryManager
     protected $entries = [];
 
     /**
-     * @param Collection $collection
+     * @param \Saaze\Collections\Collection $collection
+     * @return void
      */
-    public function __construct(Collection $collection)
+    public function setCollection(Collection $collection)
     {
         $this->collection = $collection;
+        $this->entries    = [];
     }
 
     /**
