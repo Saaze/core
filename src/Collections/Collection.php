@@ -3,7 +3,7 @@
 namespace Saaze\Collections;
 
 use Saaze\Interfaces\CollectionInterface;
-use Symfony\Component\Yaml\Yaml;
+use Saaze\Interfaces\CollectionParserInterface;
 use Symfony\Component\Finder\Finder;
 
 class Collection implements CollectionInterface
@@ -26,15 +26,11 @@ class Collection implements CollectionInterface
     /**
      * @param string $filePath
      */
-    public function __construct($filePath)
+    public function __construct($filePath, CollectionParserInterface $collectionParser)
     {
         $this->filePath = $filePath;
-        $this->parse();
-    }
 
-    protected function parse()
-    {
-        $this->data = Yaml::parse(file_get_contents($this->filePath));
+        $this->data = $collectionParser->parseCollection($this->filePath);
     }
 
     /**

@@ -2,10 +2,10 @@
 
 namespace Saaze\Entries;
 
-use Symfony\Component\Yaml\Yaml;
 use Saaze\Interfaces\CollectionInterface;
 use Saaze\Interfaces\ContentParserInterface;
 use Saaze\Interfaces\EntryInterface;
+use Saaze\Interfaces\EntryParserInterface;
 
 class Entry implements EntryInterface
 {
@@ -32,21 +32,12 @@ class Entry implements EntryInterface
     /**
      * @param string $filePath
      */
-    public function __construct($filePath, ContentParserInterface $contentParser)
+    public function __construct($filePath, ContentParserInterface $contentParser, EntryParserInterface $entryParser)
     {
         $this->filePath      = $filePath;
         $this->contentParser = $contentParser;
 
-        $this->parse();
-    }
-
-    protected function parse()
-    {
-        $content = file_get_contents($this->filePath);
-        $data    = explode('---', $content, 2);
-
-        $this->data = Yaml::parse($data[0]);
-        $this->data['content_raw'] = $data[1] ?? '';
+        $this->data = $entryParser->parseEntry($this->filePath);
     }
 
     /**
