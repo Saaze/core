@@ -19,7 +19,9 @@ class Container
     protected function __construct()
     {
         $definitions = [
+            \Saaze\Interfaces\EntryInterface::class             => \Saaze\Entries\Entry::class,
             \Saaze\Interfaces\EntryManagerInterface::class      => \Saaze\Entries\EntryManager::class,
+            \Saaze\Interfaces\CollectionInterface::class        => \Saaze\Collections\Collection::class,
             \Saaze\Interfaces\CollectionManagerInterface::class => \Saaze\Collections\CollectionManager::class,
             \Saaze\Interfaces\RouterInterface::class            => \Saaze\Routing\Router::class,
             \Saaze\Interfaces\TemplateManagerInterface::class   => \Saaze\Templates\TemplateManager::class,

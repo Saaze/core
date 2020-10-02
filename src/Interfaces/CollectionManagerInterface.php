@@ -15,7 +15,7 @@ interface CollectionManagerInterface
      * Return a single collection identified by a slug
      *
      * @param string $slug
-     * @return \Saaze\Collections\Collection|null
+     * @return \Saaze\Interfaces\CollectionInterface|null
      */
     public function getCollection($slug);
 }

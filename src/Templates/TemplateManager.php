@@ -2,8 +2,8 @@
 
 namespace Saaze\Templates;
 
-use Saaze\Entries\Entry;
-use Saaze\Collections\Collection;
+use Saaze\Interfaces\CollectionInterface;
+use Saaze\Interfaces\EntryInterface;
 use Saaze\Interfaces\EntryManagerInterface;
 use Saaze\Interfaces\TemplateParserInterface;
 use Saaze\Interfaces\TemplateManagerInterface;
@@ -27,11 +27,11 @@ class TemplateManager implements TemplateManagerInterface
     }
 
     /**
-     * @param Collection $collection
+     * @param CollectionInterface $collection
      * @param int $page
      * @return string
      */
-    public function renderCollection(Collection $collection, $page)
+    public function renderCollection(CollectionInterface $collection, $page)
     {
         $this->entryManager->setCollection($collection);
 
@@ -50,10 +50,10 @@ class TemplateManager implements TemplateManagerInterface
     }
 
     /**
-     * @param Entry $entry
+     * @param EntryInterface $entry
      * @return string
      */
-    public function renderEntry(Entry $entry)
+    public function renderEntry(EntryInterface $entry)
     {
         $this->entryManager->setCollection($entry->getCollection());
 

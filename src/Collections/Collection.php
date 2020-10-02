@@ -2,10 +2,11 @@
 
 namespace Saaze\Collections;
 
+use Saaze\Interfaces\CollectionInterface;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Finder\Finder;
 
-class Collection
+class Collection implements CollectionInterface
 {
     /**
      * @var string
@@ -69,6 +70,14 @@ class Collection
     }
 
     /**
+     * @return string|null
+     */
+    public function entryRoute()
+    {
+        return $this->data['entry_route'] ?? null;
+    }
+
+    /**
      * @return bool
      */
     public function indexIsEntry()
@@ -78,13 +87,5 @@ class Collection
             ->files()
             ->name('index.md')
             ->count();
-    }
-
-    /**
-     * @return string|null
-     */
-    public function entryRoute()
-    {
-        return $this->data['entry_route'] ?? null;
     }
 }

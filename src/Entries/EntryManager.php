@@ -2,15 +2,16 @@
 
 namespace Saaze\Entries;
 
-use Saaze\Entries\Entry;
-use Saaze\Collections\Collection;
+use Saaze\Interfaces\EntryInterface;
+use Saaze\Container\Container;
+use Saaze\Interfaces\CollectionInterface;
 use Saaze\Interfaces\EntryManagerInterface;
 use Symfony\Component\Finder\Finder;
 
 class EntryManager implements EntryManagerInterface
 {
     /**
-     * @var Collection
+     * @var CollectionInterface
      */
     protected $collection;
 
@@ -20,10 +21,10 @@ class EntryManager implements EntryManagerInterface
     protected $entries = [];
 
     /**
-     * @param \Saaze\Collections\Collection $collection
+     * @param \Saaze\Interfaces\CollectionInterface $collection
      * @return void
      */
-    public function setCollection(Collection $collection)
+    public function setCollection(CollectionInterface $collection)
     {
         $this->collection = $collection;
         $this->entries    = [];
@@ -67,7 +68,7 @@ class EntryManager implements EntryManagerInterface
 
     /**
      * @param string $slug
-     * @return \Saaze\Entries\Entry|null
+     * @return EntryInterface|null
      */
     public function getEntry($slug)
     {
@@ -109,7 +110,7 @@ class EntryManager implements EntryManagerInterface
 
     /**
      * @param string $filePath
-     * @return \Saaze\Entries\Entry|null
+     * @return EntryInterface|null
      */
     protected function loadEntry($filePath)
     {
@@ -117,7 +118,8 @@ class EntryManager implements EntryManagerInterface
             return null;
         }
 
-        $entry = new Entry($filePath);
+        $container = Container::getInstance();
+        $entry     = $container->make(EntryInterface::class, ['filePath' => $filePath]);
 
         $this->entries[$entry->slug()] = $entry;
 
@@ -170,10 +172,10 @@ class EntryManager implements EntryManagerInterface
     }
 
     /**
-     * @param Entry $entry
+     * @param EntryInterface $entry
      * @return array
      */
-    public function getEntryForTemplate(Entry $entry)
+    public function getEntryForTemplate(EntryInterface $entry)
     {
         $entry->setCollection($this->collection);
         $entryData = $entry->data();

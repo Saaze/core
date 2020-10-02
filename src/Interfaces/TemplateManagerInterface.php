@@ -7,19 +7,19 @@ interface TemplateManagerInterface
     /**
      * Render a collection template
      *
-     * @param \Saaze\Collections\Collection $collection
+     * @param \Saaze\Interfaces\CollectionInterface $collection
      * @param int $page
      * @return string
      */
-    public function renderCollection(\Saaze\Collections\Collection $collection, $page);
+    public function renderCollection(\Saaze\Interfaces\CollectionInterface $collection, $page);
 
     /**
      * Render an entry template
      *
-     * @param \Saaze\Entries\Entry $entry
+     * @param \Saaze\Interfaces\EntryInterface $entry
      * @return string
      */
-    public function renderEntry(\Saaze\Entries\Entry $entry);
+    public function renderEntry(\Saaze\Interfaces\EntryInterface $entry);
 
     /**
      * Render an error template

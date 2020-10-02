@@ -2,16 +2,16 @@
 
 namespace Saaze\Entries;
 
-use Parsedown;
 use Symfony\Component\Yaml\Yaml;
-use Saaze\Collections\Collection;
+use Saaze\Interfaces\CollectionInterface;
+use Saaze\Interfaces\EntryInterface;
 
-class Entry
+class Entry implements EntryInterface
 {
     /**
-     * @var Collection|null
+     * @var CollectionInterface|null
      */
-    protected $collection;
+    protected $collection = null;
 
     /**
      * @var string
@@ -28,8 +28,8 @@ class Entry
      */
     public function __construct($filePath)
     {
-        $this->collection = null;
-        $this->filePath = $filePath;
+        $this->filePath      = $filePath;
+
         $this->parse();
     }
 
@@ -43,15 +43,15 @@ class Entry
     }
 
     /**
-     * @param Collection $collection
+     * @param CollectionInterface $collection
      */
-    public function setCollection(Collection $collection)
+    public function setCollection(CollectionInterface $collection)
     {
         $this->collection = $collection;
     }
 
     /**
-     * @return Collection|null
+     * @return CollectionInterface|null
      */
     public function getCollection()
     {

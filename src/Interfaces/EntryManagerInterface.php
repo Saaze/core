@@ -7,10 +7,10 @@ interface EntryManagerInterface
     /**
      * Set the collection
      *
-     * @param \Saaze\Collections\Collection $collection
+     * @param \Saaze\Interfaces\CollectionInterface $collection
      * @return void
      */
-    public function setCollection(\Saaze\Collections\Collection $collection);
+    public function setCollection(\Saaze\Interfaces\CollectionInterface $collection);
 
     /**
      * Return a sorted array of entries
@@ -23,7 +23,7 @@ interface EntryManagerInterface
      * Return a single entry identified by a slug
      *
      * @param string $slug
-     * @return \Saaze\Entries\Entry|null
+     * @return \Saaze\Interfaces\EntryInterface|null
      */
     public function getEntry($slug);
 
@@ -39,8 +39,8 @@ interface EntryManagerInterface
     /**
      * Return an entry for a template
      *
-     * @param \Saaze\Entries\Entry $entry
+     * @param \Saaze\Interfaces\EntryInterface $entry
      * @return array
      */
-    public function getEntryForTemplate(\Saaze\Entries\Entry $entry);
+    public function getEntryForTemplate(\Saaze\Interfaces\EntryInterface $entry);
 }

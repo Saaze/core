@@ -2,11 +2,9 @@
 
 namespace Saaze\Commands;
 
-use Saaze\Entries\Entry;
-use Saaze\Entries\EntryManager;
-use Saaze\Collections\Collection;
-use Saaze\Collections\CollectionManager;
+use Saaze\Interfaces\CollectionInterface;
 use Saaze\Interfaces\CollectionManagerInterface;
+use Saaze\Interfaces\EntryInterface;
 use Saaze\Interfaces\EntryManagerInterface;
 use Saaze\Interfaces\TemplateManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -124,12 +122,12 @@ class BuildCommand extends Command
     }
 
     /**
-     * @param Collection $collection
+     * @param CollectionInterface $collection
      * @param int $page
      * @param string $dest
      * @return bool
      */
-    private function buildCollectionIndex(Collection $collection, $page, $dest)
+    private function buildCollectionIndex(CollectionInterface $collection, $page, $dest)
     {
         if (!$collection->indexRoute()) {
             return false;
@@ -157,12 +155,12 @@ class BuildCommand extends Command
     }
 
     /**
-     * @param Collection $collection
-     * @param Entry $entry
+     * @param CollectionInterface $collection
+     * @param EntryInterface $entry
      * @param string $dest
      * @return bool
      */
-    private function buildEntry(Collection $collection, Entry $entry, $dest)
+    private function buildEntry(CollectionInterface $collection, EntryInterface $entry, $dest)
     {
         if (!$collection->entryRoute()) {
             return false;
