@@ -21,8 +21,9 @@ class Container
         $definitions = [
             \Saaze\Interfaces\EntryManagerInterface::class      => \Saaze\Entries\EntryManager::class,
             \Saaze\Interfaces\CollectionManagerInterface::class => \Saaze\Collections\CollectionManager::class,
-            \Saaze\Interfaces\TemplateManagerInterface::class   => \Saaze\Templates\TemplateManager::class,
             \Saaze\Interfaces\RouterInterface::class            => \Saaze\Routing\Router::class,
+            \Saaze\Interfaces\TemplateManagerInterface::class   => \Saaze\Templates\TemplateManager::class,
+            \Saaze\Interfaces\TemplateParserInterface::class    => \Saaze\Templates\BladeTemplateParser::class,
         ];
 
         $definitions = array_merge($definitions, $this->getCustomDefenitions());
