@@ -4,6 +4,7 @@ namespace Saaze\Entries;
 
 use Symfony\Component\Yaml\Yaml;
 use Saaze\Interfaces\CollectionInterface;
+use Saaze\Interfaces\ContentParserInterface;
 use Saaze\Interfaces\EntryInterface;
 
 class Entry implements EntryInterface
@@ -24,11 +25,17 @@ class Entry implements EntryInterface
     protected $data;
 
     /**
+     * @var ContentParserInterface
+     */
+    protected $contentParser;
+
+    /**
      * @param string $filePath
      */
-    public function __construct($filePath)
+    public function __construct($filePath, ContentParserInterface $contentParser)
     {
         $this->filePath      = $filePath;
+        $this->contentParser = $contentParser;
 
         $this->parse();
     }
@@ -105,9 +112,7 @@ class Entry implements EntryInterface
             return $this->data['content'];
         }
 
-        return Parsedown::instance()
-            ->setBreaksEnabled(true)
-            ->text($this->data['content_raw']);
+        return $this->contentParser->toHtml($this->data['content_raw']);
     }
 
     /**
