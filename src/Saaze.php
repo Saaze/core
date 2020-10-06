@@ -13,8 +13,10 @@ class Saaze
     {
         define('SAAZE_PATH', $saazePath);
 
-        $dotenv = Dotenv::createImmutable($saazePath);
-        $dotenv->load();
+        if (file_exists("{$saazePath}/.env")) {
+            $dotenv = Dotenv::createImmutable($saazePath);
+            $dotenv->load();
+        }
     }
 
     /**
