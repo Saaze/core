@@ -51,7 +51,7 @@ class BuildCommand extends Command
         $dest = $input->getOption('dest');
 
         if (strpos($dest, '/') !== 0) {
-            $dest = SAAZE_BASE_DIR . DIRECTORY_SEPARATOR . $dest;
+            $dest = base_path() . "/{$dest}";
         }
 
         $output->writeln("<info>Building static site in {$dest}...</info>");
@@ -136,20 +136,20 @@ class BuildCommand extends Command
         $collectionDir = $dest;
 
         if ($collection->indexRoute() !== '/') {
-            $collectionDir = $dest . DIRECTORY_SEPARATOR . ltrim($collection->indexRoute(), DIRECTORY_SEPARATOR);
+            $collectionDir = "{$dest}/" . ltrim($collection->indexRoute(), '/');
         }
 
-        $collectionDir = rtrim($collectionDir, DIRECTORY_SEPARATOR);
+        $collectionDir = rtrim($collectionDir, '/');
 
         if ($page) {
-            $collectionDir .= DIRECTORY_SEPARATOR . 'page' . DIRECTORY_SEPARATOR . $page;
+            $collectionDir .= "/page/{$page}";
         }
 
         if (!is_dir($collectionDir)) {
             mkdir($collectionDir, 0777, true);
         }
 
-        file_put_contents($collectionDir . DIRECTORY_SEPARATOR . 'index.html', $this->templateManager->renderCollection($collection, $page));
+        file_put_contents($collectionDir . '/index.html', $this->templateManager->renderCollection($collection, $page));
 
         return true;
     }
@@ -166,7 +166,7 @@ class BuildCommand extends Command
             return false;
         }
 
-        $entryDir = $dest . DIRECTORY_SEPARATOR . ltrim($collection->entryRoute(), DIRECTORY_SEPARATOR);
+        $entryDir = "{$dest}/" . ltrim($collection->entryRoute(), '/');
 
         if ($entry->slug() === 'index') {
             $entryDir = str_replace('{slug}', '', $entryDir);
@@ -174,13 +174,13 @@ class BuildCommand extends Command
             $entryDir = str_replace('{slug}', $entry->slug(), $entryDir);
         }
 
-        $entryDir = rtrim($entryDir, DIRECTORY_SEPARATOR);
+        $entryDir = rtrim($entryDir, '/');
 
         if (!is_dir($entryDir)) {
             mkdir($entryDir, 0777, true);
         }
 
-        file_put_contents($entryDir . DIRECTORY_SEPARATOR . 'index.html', $this->templateManager->renderEntry($entry));
+        file_put_contents("{$entryDir}/index.html", $this->templateManager->renderEntry($entry));
 
         return true;
     }

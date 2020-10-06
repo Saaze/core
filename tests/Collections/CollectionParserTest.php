@@ -21,7 +21,7 @@ class CollectionParserTest extends TestCase
 
     public function testParseCollection()
     {
-        $collection = $this->collectionParser->parseCollection(SAAZE_CONTENT_PATH . '/pages.yml');
+        $collection = $this->collectionParser->parseCollection(content_path() . '/pages.yml');
 
         $this->assertIsArray($collection);
         $this->assertArrayHasKey('title', $collection);

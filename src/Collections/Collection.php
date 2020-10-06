@@ -79,7 +79,7 @@ class Collection implements CollectionInterface
     public function indexIsEntry()
     {
         return (bool) (new Finder())
-            ->in(SAAZE_CONTENT_PATH . DIRECTORY_SEPARATOR . $this->slug())
+            ->in(content_path() . '/' . $this->slug())
             ->files()
             ->name('index.md')
             ->count();

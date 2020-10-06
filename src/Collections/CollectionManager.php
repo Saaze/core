@@ -57,7 +57,7 @@ class CollectionManager implements CollectionManagerInterface
      */
     protected function loadCollections()
     {
-        $paths = (new Finder())->in(SAAZE_CONTENT_PATH)->files()->name('*.yml')->depth(0);
+        $paths = (new Finder())->in(content_path())->files()->name('*.yml')->depth(0);
 
         foreach ($paths as $file) {
             $this->loadCollection($file->getPathname());

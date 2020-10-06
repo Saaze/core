@@ -14,11 +14,11 @@ class BladeTemplateParser implements TemplateParserInterface
      */
     public function render($template, $data = [])
     {
-        if (!is_dir(SAAZE_CACHE_PATH . '/blade')) {
-            mkdir(SAAZE_CACHE_PATH . '/blade', 0777, true);
+        if (!is_dir(cache_path() . '/blade')) {
+            mkdir(cache_path() . '/blade', 0777, true);
         }
 
-        $blade = new Blade(SAAZE_TEMPLATES_PATH, SAAZE_CACHE_PATH . '/blade');
+        $blade = new Blade(templates_path(), cache_path() . '/blade');
         return $blade->render($template, $data);
     }
 
@@ -28,6 +28,6 @@ class BladeTemplateParser implements TemplateParserInterface
      */
     public function templateExists($template)
     {
-        return file_exists(SAAZE_TEMPLATES_PATH . "/{$template}.blade.php");
+        return file_exists(templates_path() . "/{$template}.blade.php");
     }
 }

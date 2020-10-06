@@ -36,8 +36,8 @@ class TemplateManager implements TemplateManagerInterface
         $this->entryManager->setCollection($collection);
 
         $template = 'collection';
-        if ($this->templateParser->templateExists($collection->slug() . DIRECTORY_SEPARATOR . 'index')) {
-            $template = $collection->slug() . DIRECTORY_SEPARATOR . 'index';
+        if ($this->templateParser->templateExists($collection->slug() . '/index')) {
+            $template = $collection->slug() . '/index';
         }
 
         $page    = filter_var($page, FILTER_SANITIZE_NUMBER_INT);
@@ -62,8 +62,8 @@ class TemplateManager implements TemplateManagerInterface
 
         if (!empty($entryData['template']) && $this->templateParser->templateExists($entryData['template'])) {
             $template = $entryData['template'];
-        } elseif ($this->templateParser->templateExists($entry->getCollection()->slug() . DIRECTORY_SEPARATOR . 'entry')) {
-            $template = $entry->getCollection()->slug() . DIRECTORY_SEPARATOR . 'entry';
+        } elseif ($this->templateParser->templateExists($entry->getCollection()->slug() . '/entry')) {
+            $template = $entry->getCollection()->slug() . '/entry';
         }
 
         return $this->templateParser->render($template, [

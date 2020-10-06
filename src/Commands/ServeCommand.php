@@ -31,7 +31,7 @@ class ServeCommand extends Command
             $this->escapeArgument((new PhpExecutableFinder)->find(false)),
             $host,
             $port,
-            SAAZE_PUBLIC_PATH . DIRECTORY_SEPARATOR . 'index.php'
+            public_path() . '/index.php'
         );
 
         passthru($command, $status);

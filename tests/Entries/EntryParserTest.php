@@ -21,7 +21,7 @@ class EntryParserTest extends TestCase
 
     public function testParseCollection()
     {
-        $entry = $this->entryParser->parseEntry(SAAZE_CONTENT_PATH . '/pages/index.md');
+        $entry = $this->entryParser->parseEntry(content_path() . '/pages/index.md');
 
         $this->assertIsArray($entry);
         $this->assertArrayHasKey('title', $entry);

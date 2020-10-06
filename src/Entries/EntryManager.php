@@ -71,13 +71,13 @@ class EntryManager implements EntryManagerInterface
      */
     public function getEntry($slug)
     {
-        $collectionDir = SAAZE_CONTENT_PATH . DIRECTORY_SEPARATOR . $this->collection->slug();
+        $collectionDir = content_path() . '/' . $this->collection->slug();
         if (!is_dir($collectionDir)) {
             return null;
         }
 
         if (empty($this->entries[$slug])) {
-            $entryPath = $collectionDir . DIRECTORY_SEPARATOR . "{$slug}.md";
+            $entryPath = $collectionDir . "/{$slug}.md";
             $entry = $this->loadEntry($entryPath);
 
             if ($entry) {
@@ -93,7 +93,7 @@ class EntryManager implements EntryManagerInterface
      */
     protected function loadEntries()
     {
-        $collectionDir = SAAZE_CONTENT_PATH . DIRECTORY_SEPARATOR . $this->collection->slug();
+        $collectionDir = content_path() . '/' . $this->collection->slug();
         if (!is_dir($collectionDir)) {
             return [];
         }

@@ -101,7 +101,7 @@ class Router implements RouterInterface
      */
     protected function isStaticFile($pathInfo)
     {
-        return !is_dir(SAAZE_PUBLIC_PATH . $pathInfo) && file_exists(SAAZE_PUBLIC_PATH . $pathInfo);
+        return !is_dir(public_path() . $pathInfo) && file_exists(public_path() . $pathInfo);
     }
 
     /**
@@ -110,7 +110,7 @@ class Router implements RouterInterface
      */
     protected function handleStaticFile($pathInfo)
     {
-        $response = new BinaryFileResponse(SAAZE_PUBLIC_PATH . $pathInfo);
+        $response = new BinaryFileResponse(public_path() . $pathInfo);
 
         $ext = pathinfo($pathInfo, PATHINFO_EXTENSION);
         if (!$ext) {
