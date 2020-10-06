@@ -2,7 +2,6 @@
 
 namespace Saaze;
 
-use Saaze\Container\Container;
 
 class Saaze
 {
@@ -11,8 +10,6 @@ class Saaze
      */
     public function run()
     {
-        $container = Container::getInstance();
-
-        $container->call([\Saaze\Interfaces\RouterInterface::class, 'handle']);
+        container()->call([\Saaze\Interfaces\RouterInterface::class, 'handle']);
     }
 }

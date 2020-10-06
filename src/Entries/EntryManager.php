@@ -3,7 +3,6 @@
 namespace Saaze\Entries;
 
 use Saaze\Interfaces\EntryInterface;
-use Saaze\Container\Container;
 use Saaze\Interfaces\CollectionInterface;
 use Saaze\Interfaces\EntryManagerInterface;
 use Symfony\Component\Finder\Finder;
@@ -118,8 +117,7 @@ class EntryManager implements EntryManagerInterface
             return null;
         }
 
-        $container = Container::getInstance();
-        $entry     = $container->make(EntryInterface::class, ['filePath' => $filePath]);
+        $entry = container()->make(EntryInterface::class, ['filePath' => $filePath]);
 
         $this->entries[$entry->slug()] = $entry;
 

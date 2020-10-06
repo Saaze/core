@@ -2,7 +2,6 @@
 
 namespace Saaze\Tests;
 
-use Saaze\Container\Container;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 
 class TestCase extends PHPUnitTestCase
@@ -14,6 +13,6 @@ class TestCase extends PHPUnitTestCase
 
     public function setUp(): void
     {
-        $this->container = Container::getInstance();
+        $this->container = container();
     }
 }

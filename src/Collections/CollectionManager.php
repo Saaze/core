@@ -2,7 +2,6 @@
 
 namespace Saaze\Collections;
 
-use Saaze\Container\Container;
 use Saaze\Interfaces\CollectionInterface;
 use Saaze\Interfaces\CollectionManagerInterface;
 use Symfony\Component\Finder\Finder;
@@ -77,8 +76,7 @@ class CollectionManager implements CollectionManagerInterface
             return null;
         }
 
-        $container  = Container::getInstance();
-        $collection = $container->make(CollectionInterface::class, ['filePath' => $filePath]);
+        $collection = container()->make(CollectionInterface::class, ['filePath' => $filePath]);
 
         $this->collections[$collection->slug()] = $collection;
 
