@@ -4,7 +4,6 @@ namespace Saaze\Routing;
 
 use Mimey\MimeTypes;
 use Symfony\Component\Routing;
-use Saaze\Entries\EntryManager;
 use Saaze\Interfaces\CollectionManagerInterface;
 use Saaze\Interfaces\EntryManagerInterface;
 use Saaze\Interfaces\RouterInterface;
