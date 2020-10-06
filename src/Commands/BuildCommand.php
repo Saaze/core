@@ -68,7 +68,7 @@ class BuildCommand extends Command
             $this->entryManager->setCollection($collection);
 
             $entries    = $this->entryManager->getEntries();
-            $totalPages = ceil(count($entries) / SAAZE_ENTRIES_PER_PAGE);
+            $totalPages = ceil(count($entries) / container()->get('config.entries_per_page'));
 
             if ($this->buildCollectionIndex($collection, null, $dest)) {
                 $collectionCount++;

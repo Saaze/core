@@ -29,7 +29,11 @@ class Container
             }
         }
 
-        $definitions = array_merge($definitions, $this->getPathDefenitions());
+        $definitions = array_merge(
+            $definitions,
+            $this->getPathDefenitions(),
+            $this->getConfigDefenitions()
+        );
 
         $builder = new ContainerBuilder();
         $builder->useAnnotations(false);
@@ -101,6 +105,16 @@ class Container
             'path.content'   => SAAZE_PATH . '/' . ($_ENV['CONTENT_PATH']   ?? 'content'),
             'path.public'    => SAAZE_PATH . '/' . ($_ENV['PUBLIC_PATH']    ?? 'public'),
             'path.templates' => SAAZE_PATH . '/' . ($_ENV['TEMPLATES_PATH'] ?? 'templates'),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getConfigDefenitions()
+    {
+        return [
+            'config.entries_per_page' => $_ENV['ENTRIES_PER_PAGE'] ?? 10,
         ];
     }
 }

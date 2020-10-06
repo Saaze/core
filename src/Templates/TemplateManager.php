@@ -41,7 +41,7 @@ class TemplateManager implements TemplateManagerInterface
         }
 
         $page    = filter_var($page, FILTER_SANITIZE_NUMBER_INT);
-        $perPage = filter_var(SAAZE_ENTRIES_PER_PAGE, FILTER_SANITIZE_NUMBER_INT);
+        $perPage = container()->get('config.entries_per_page');
 
         return $this->templateParser->render($template, [
             'collection' => $collection->data(),
