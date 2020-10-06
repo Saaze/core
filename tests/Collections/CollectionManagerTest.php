@@ -2,13 +2,13 @@
 
 namespace Saaze\Tests\Collections;
 
-use Saaze\Collections\CollectionManager;
+use Saaze\Interfaces\CollectionManagerInterface;
 use Saaze\Tests\TestCase;
 
 class CollectionManagerTest extends TestCase
 {
     /**
-     * @var CollectionManager
+     * @var CollectionManagerInterface
      */
     protected $collectionManager;
 
@@ -16,7 +16,7 @@ class CollectionManagerTest extends TestCase
     {
         parent::setUp();
 
-        $this->collectionManager = $this->container->get(CollectionManager::class);
+        $this->collectionManager = $this->container->get(CollectionManagerInterface::class);
     }
 
     public function testGetCollections()
@@ -42,7 +42,7 @@ class CollectionManagerTest extends TestCase
     public function testGetCollection()
     {
         $collection = $this->collectionManager->getCollection('pages');
-        $this->assertInstanceOf(\Saaze\Collections\Collection::class, $collection);
+        $this->assertInstanceOf(\Saaze\Interfaces\CollectionInterface::class, $collection);
 
         $collection = $this->collectionManager->getCollection('nonexistent');
         $this->assertNull($collection);

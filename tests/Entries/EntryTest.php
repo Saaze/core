@@ -3,13 +3,13 @@
 namespace Saaze\Tests\Entries;
 
 use Saaze\Tests\TestCase;
-use Saaze\Entries\EntryManager;
-use Saaze\Collections\CollectionManager;
+use Saaze\Interfaces\CollectionManagerInterface;
+use Saaze\Interfaces\EntryManagerInterface;
 
 class EntryTest extends TestCase
 {
     /**
-     * @var EntryManager
+     * @var EntryManagerInterface
      */
     protected $entryManager;
 
@@ -22,9 +22,9 @@ class EntryTest extends TestCase
     {
         parent::setUp();
 
-        $collectionManager  = $this->container->get(CollectionManager::class);
+        $collectionManager  = $this->container->get(CollectionManagerInterface::class);
         $collection         = $collectionManager->getCollection('posts');
-        $this->entryManager = $this->container->get(EntryManager::class);
+        $this->entryManager = $this->container->get(EntryManagerInterface::class);
         $this->entryManager->setCollection($collection);
         $this->entry        = $this->entryManager->getEntry('example-post-1');
         $this->entry->setCollection($collection);
@@ -52,9 +52,9 @@ class EntryTest extends TestCase
 
     public function testUrlIsIndex()
     {
-        $collectionManager = $this->container->get(CollectionManager::class);
+        $collectionManager = $this->container->get(CollectionManagerInterface::class);
         $collection        = $collectionManager->getCollection('docs');
-        $entryManager      = $this->container->get(EntryManager::class);
+        $entryManager      = $this->container->get(EntryManagerInterface::class);
         $entryManager->setCollection($collection);
         $entry             = $entryManager->getEntry('index');
         $entry->setCollection($collection);

@@ -2,19 +2,19 @@
 
 namespace Saaze\Tests\Collections;
 
-use Saaze\Collections\CollectionManager;
-use Saaze\Entries\EntryManager;
+use Saaze\Interfaces\CollectionManagerInterface;
+use Saaze\Interfaces\EntryManagerInterface;
 use Saaze\Tests\TestCase;
 
 class EntryManagerTest extends TestCase
 {
     /**
-     * @var \Saaze\Collections\Collection
+     * @var \Saaze\Interfaces\CollectionInterface
      */
     protected $collection;
 
     /**
-     * @var EntryManager
+     * @var EntryManagerInterface
      */
     protected $entryManager;
 
@@ -22,9 +22,9 @@ class EntryManagerTest extends TestCase
     {
         parent::setUp();
 
-        $collectionManager  = $this->container->get(CollectionManager::class);
+        $collectionManager  = $this->container->get(CollectionManagerInterface::class);
         $this->collection   = $collectionManager->getCollection('posts');
-        $this->entryManager = $this->container->get(EntryManager::class);
+        $this->entryManager = $this->container->get(EntryManagerInterface::class);
         $this->entryManager->setCollection($this->collection);
     }
 
@@ -39,7 +39,7 @@ class EntryManagerTest extends TestCase
     public function testGetEntry()
     {
         $entry = $this->entryManager->getEntry('example-post-1');
-        $this->assertInstanceOf(\Saaze\Entries\Entry::class, $entry);
+        $this->assertInstanceOf(\Saaze\Interfaces\EntryInterface::class, $entry);
 
         $entry = $this->entryManager->getEntry('nonexistent');
         $this->assertNull($entry);
