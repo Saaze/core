@@ -3,8 +3,6 @@
 namespace Saaze;
 
 use Dotenv\Dotenv;
-use Saaze\Commands\BuildCommand;
-use Saaze\Commands\ServeCommand;
 use Symfony\Component\Console\Application;
 
 class SaazeCli
@@ -27,8 +25,9 @@ class SaazeCli
         $container = container();
 
         $app = new Application('Saaze');
-        $app->add($container->get(BuildCommand::class));
-        $app->add($container->get(ServeCommand::class));
+        $app->add($container->get(\Saaze\Commands\BuildCommand::class));
+        $app->add($container->get(\Saaze\Commands\ServeCommand::class));
+        $app->add($container->get(\Saaze\Commands\Make\MakeCollectionCommand::class));
         $app->run();
     }
 }
