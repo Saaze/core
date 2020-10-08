@@ -80,6 +80,11 @@ class EntryManager implements EntryManagerInterface
             $entryPath = $collectionDir . "/{$slug}.md";
             $entry = $this->loadEntry($entryPath);
 
+            if (!$entry) {
+                $entryPath = $collectionDir . "/{$slug}/index.md";
+                $entry = $this->loadEntry($entryPath);
+            }
+
             if ($entry) {
                 $this->entries[$slug] = $entry;
             }

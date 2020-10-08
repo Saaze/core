@@ -167,11 +167,10 @@ class BuildCommand extends Command
         }
 
         $entryDir = "{$dest}/" . ltrim($collection->entryRoute(), '/');
+        $entryDir = str_replace('{slug}', $entry->slug(), $entryDir);
 
-        if ($entry->slug() === 'index') {
-            $entryDir = str_replace('{slug}', '', $entryDir);
-        } else {
-            $entryDir = str_replace('{slug}', $entry->slug(), $entryDir);
+        if (substr_compare($entry->slug(), 'index', -strlen('index')) === 0) {
+            $entryDir = preg_replace('/index$/', '', $entryDir);
         }
 
         $entryDir = rtrim($entryDir, '/');

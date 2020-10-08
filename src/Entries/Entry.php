@@ -90,11 +90,11 @@ class Entry implements EntryInterface
      */
     public function url()
     {
-        if (!$this->collection) {
-            return '';
-        }
+        $slug = $this->slug();
 
-        $slug = $this->slug() !== 'index' ? $this->slug() : '';
+        if (substr_compare($this->slug(), 'index', -strlen('index')) === 0) {
+            $slug = preg_replace('/index$/', '', $slug);
+        }
 
         return rtrim(str_replace('{slug}', $slug, $this->collection->entryRoute()), '/');
     }
