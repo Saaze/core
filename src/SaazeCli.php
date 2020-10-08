@@ -28,6 +28,7 @@ class SaazeCli
         $app->add($container->get(\Saaze\Commands\BuildCommand::class));
         $app->add($container->get(\Saaze\Commands\ServeCommand::class));
         $app->add($container->get(\Saaze\Commands\Make\MakeCollectionCommand::class));
+        $app->add($container->get(\Saaze\Commands\Make\MakeEntryCommand::class));
         $app->run();
     }
 }
