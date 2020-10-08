@@ -89,7 +89,9 @@ class Router implements RouterInterface
                 $routes->add("{$collection->slug()}_page", new Routing\Route($collection->indexRoute() . '/page/{page}', ['collection' => $collection->slug()]));
             }
             if ($collection->entryRoute()) {
-                $routes->add("{$collection->slug()}_entry", new Routing\Route($collection->entryRoute(), ['collection' => $collection->slug()]));
+                $routes->add("{$collection->slug()}_entry", new Routing\Route($collection->entryRoute(), ['collection' => $collection->slug()], [
+                    'slug' => '.+',
+                ]));
             }
         }
 

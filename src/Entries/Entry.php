@@ -77,7 +77,12 @@ class Entry implements EntryInterface
      */
     public function slug()
     {
-        return basename($this->filePath, '.md');
+        $slug = substr($this->filePath, 0, strrpos($this->filePath, '.'));
+        $slug = str_replace(content_path(), '', $slug);
+        $slug = str_replace("/{$this->collection->slug()}", '', $slug);
+        $slug = ltrim($slug, '/');
+
+        return $slug;
     }
 
     /**

@@ -118,6 +118,7 @@ class EntryManager implements EntryManagerInterface
         }
 
         $entry = container()->make(EntryInterface::class, ['filePath' => $filePath]);
+        $entry->setCollection($this->collection);
 
         $this->entries[$entry->slug()] = $entry;
 
