@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MakeCollectionCommand extends Command
+class MakeCollectionCommand extends MakeCommand
 {
     protected static $defaultName = 'make:collection';
 
@@ -33,8 +33,7 @@ class MakeCollectionCommand extends Command
         $sortField  = $input->getOption('sort-field');
         $sortDesc   = $input->getOption('sort-desc');
 
-        $id = preg_replace('/[^a-zA-Z0-9]/', '', strtolower($id));
-        $id = preg_replace('/[-]+/', '-', $id);
+        $id = $this->sanitizeFilename($id);
 
         if (file_exists(content_path() . "/{$id}.yml")) {
             $output->writeln("<error>The collection \"{$id}\" already exists</error>");
