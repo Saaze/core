@@ -22,10 +22,21 @@ class EntryManagerTest extends TestCase
     {
         parent::setUp();
 
-        $collectionManager  = $this->container->get(CollectionManagerInterface::class);
-        $this->collection   = $collectionManager->getCollection('posts');
-        $this->entryManager = $this->container->get(EntryManagerInterface::class);
-        $this->entryManager->setCollection($this->collection);
+        $this->entryManager = $this->getEntryManager('posts');
+    }
+
+    /**
+     * @param string $collectionSlug
+     * @return EntryManagerInterface
+     */
+    private function getEntryManager($collectionSlug)
+    {
+        $collectionManager = $this->container->get(CollectionManagerInterface::class);
+        $collection        = $collectionManager->getCollection($collectionSlug);
+        $entryManager      = $this->container->get(EntryManagerInterface::class);
+        $entryManager->setCollection($collection);
+
+        return $entryManager;
     }
 
     public function testGetEntries()
@@ -43,12 +54,24 @@ class EntryManagerTest extends TestCase
 
         $entry = $this->entryManager->getEntry('nonexistent');
         $this->assertNull($entry);
+
+        $entryManager = $this->getEntryManager('pages');
+        $this->assertNotNull($entryManager->getEntry('index'));
+        $this->assertNotNull($entryManager->getEntry('level1'));
+        $this->assertNotNull($entryManager->getEntry('level1/page'));
+        $this->assertNotNull($entryManager->getEntry('level1/level2/page'));
+
+        $entryManager = $this->getEntryManager('docs');
+        $this->assertNotNull($entryManager->getEntry('index'));
+        $this->assertNotNull($entryManager->getEntry('level1'));
+        $this->assertNotNull($entryManager->getEntry('level1/page'));
+        $this->assertNotNull($entryManager->getEntry('level1/level2/page'));
     }
 
     public function testGetEntriesSortedByDate()
     {
-        $entries = $this->entryManager->getEntries();
-        $sortField = $this->collection->data()['sort']['field'];
+        $entries   = $this->entryManager->getEntries();
+        $sortField = 'date';
 
         $this->assertTrue(strtotime($entries[0]->data()[$sortField]) > strtotime($entries[1]->data()[$sortField]));
         $this->assertTrue(strtotime($entries[1]->data()[$sortField]) > strtotime($entries[2]->data()[$sortField]));
