@@ -2,7 +2,7 @@
 
 namespace Saaze\Content;
 
-use Parsedown;
+use ParsedownExtra;
 use Saaze\Interfaces\ContentParserInterface;
 
 class MarkdownContentParser implements ContentParserInterface
@@ -13,7 +13,7 @@ class MarkdownContentParser implements ContentParserInterface
      */
     public function toHtml($content)
     {
-        return Parsedown::instance()
+        return ParsedownExtra::instance()
             ->setBreaksEnabled(true)
             ->text($content);
     }
