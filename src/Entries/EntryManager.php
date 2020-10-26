@@ -57,11 +57,14 @@ class EntryManager implements EntryManagerInterface
         $direction = $sort['direction'] ?? 'asc';
 
         usort($this->entries, function ($a, $b) use ($field, $direction) {
+            $aData = $a->data()[$field] ?? null;
+            $bData = $b->data()[$field] ?? null;
+
             if (strtolower($direction) === 'asc') {
-                return $a->data()[$field] <=> $b->data()[$field];
+                return $aData <=> $bData;
             }
 
-            return $b->data()[$field] <=> $a->data()[$field];
+            return $bData <=> $aData;
         });
     }
 
