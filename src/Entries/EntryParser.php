@@ -2,8 +2,8 @@
 
 namespace Saaze\Entries;
 
-use Symfony\Component\Yaml\Yaml;
 use Saaze\Interfaces\EntryParserInterface;
+use Spatie\YamlFrontMatter\YamlFrontMatter;
 
 class EntryParser implements EntryParserInterface
 {
@@ -13,11 +13,10 @@ class EntryParser implements EntryParserInterface
      */
     public function parseEntry($filePath)
     {
-        $content = file_get_contents($filePath);
-        $parts    = explode('---', $content, 2);
+        $object = YamlFrontMatter::parse(file_get_contents($filePath));
 
-        $data = Yaml::parse($parts[0]);
-        $data['content_raw'] = $parts[1] ?? '';
+        $data = $object->matter();
+        $data['content_raw'] = $object->body();
 
         return $data;
     }
