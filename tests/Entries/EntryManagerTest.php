@@ -77,6 +77,14 @@ class EntryManagerTest extends TestCase
         $this->assertTrue(strtotime($entries[1]->data()[$sortField]) > strtotime($entries[2]->data()[$sortField]));
     }
 
+    public function testGetEntriesSortedMissingSortField()
+    {
+        $entryManager = $this->getEntryManager('docs');
+        $entries      = $entryManager->getEntries();
+
+        $this->assertEquals('Order Missing', $entries[0]->data()['title']);
+    }
+
     public function testGetEntriesForTemplate()
     {
         $entries = $this->entryManager->getEntriesForTemplate(1, 10);
