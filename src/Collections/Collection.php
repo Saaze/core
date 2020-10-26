@@ -2,9 +2,10 @@
 
 namespace Saaze\Collections;
 
+use Adbar\Dot;
+use Symfony\Component\Finder\Finder;
 use Saaze\Interfaces\CollectionInterface;
 use Saaze\Interfaces\CollectionParserInterface;
-use Symfony\Component\Finder\Finder;
 
 class Collection implements CollectionInterface
 {
@@ -14,7 +15,7 @@ class Collection implements CollectionInterface
     protected $filePath;
 
     /**
-     * @var array
+     * @var Dot
      */
     protected $data;
 
@@ -30,7 +31,7 @@ class Collection implements CollectionInterface
     {
         $this->filePath = $filePath;
 
-        $this->data = $collectionParser->parseCollection($this->filePath);
+        $this->data = new Dot($collectionParser->parseCollection($this->filePath));
     }
 
     /**
@@ -42,11 +43,17 @@ class Collection implements CollectionInterface
     }
 
     /**
-     * @return array
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
      */
-    public function data()
+    public function data($key = '', $default = null)
     {
-        return $this->data;
+        if ($key) {
+            return $this->data->get($key, $default);
+        }
+
+        return $this->data->all();
     }
 
     /**
@@ -62,7 +69,7 @@ class Collection implements CollectionInterface
      */
     public function indexRoute()
     {
-        return $this->data['index_route'] ?? null;
+        return $this->data('index_route');
     }
 
     /**
@@ -70,7 +77,7 @@ class Collection implements CollectionInterface
      */
     public function entryRoute()
     {
-        return $this->data['entry_route'] ?? null;
+        return $this->data('entry_route');
     }
 
     /**

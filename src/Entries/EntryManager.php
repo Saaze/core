@@ -48,17 +48,16 @@ class EntryManager implements EntryManagerInterface
 
     protected function sortEntries()
     {
-        if (empty($this->collection->data()['sort'])) {
+        if (empty($this->collection->data('sort'))) {
             return;
         }
 
-        $sort      = $this->collection->data()['sort'];
-        $field     = $sort['field'] ?? 'title';
-        $direction = $sort['direction'] ?? 'asc';
+        $field     = $this->collection->data('sort.field', 'title');
+        $direction = $this->collection->data('sort.direction', 'asc');
 
         usort($this->entries, function ($a, $b) use ($field, $direction) {
-            $aData = $a->data()[$field] ?? null;
-            $bData = $b->data()[$field] ?? null;
+            $aData = $a->data($field);
+            $bData = $b->data($field);
 
             if (strtolower($direction) === 'asc') {
                 return $aData <=> $bData;

@@ -73,8 +73,8 @@ class EntryManagerTest extends TestCase
         $entries   = $this->entryManager->getEntries();
         $sortField = 'date';
 
-        $this->assertTrue(strtotime($entries[0]->data()[$sortField]) > strtotime($entries[1]->data()[$sortField]));
-        $this->assertTrue(strtotime($entries[1]->data()[$sortField]) > strtotime($entries[2]->data()[$sortField]));
+        $this->assertTrue(strtotime($entries[0]->data($sortField)) > strtotime($entries[1]->data($sortField)));
+        $this->assertTrue(strtotime($entries[1]->data($sortField)) > strtotime($entries[2]->data($sortField)));
     }
 
     public function testGetEntriesSortedMissingSortField()
@@ -82,7 +82,7 @@ class EntryManagerTest extends TestCase
         $entryManager = $this->getEntryManager('docs');
         $entries      = $entryManager->getEntries();
 
-        $this->assertEquals('Order Missing', $entries[0]->data()['title']);
+        $this->assertEquals('Order Missing', $entries[0]->data('title'));
     }
 
     public function testGetEntriesForTemplate()

@@ -2,10 +2,11 @@
 
 namespace Saaze\Entries;
 
-use Saaze\Interfaces\CollectionInterface;
-use Saaze\Interfaces\ContentParserInterface;
+use Adbar\Dot;
 use Saaze\Interfaces\EntryInterface;
+use Saaze\Interfaces\CollectionInterface;
 use Saaze\Interfaces\EntryParserInterface;
+use Saaze\Interfaces\ContentParserInterface;
 
 class Entry implements EntryInterface
 {
@@ -20,7 +21,7 @@ class Entry implements EntryInterface
     protected $filePath;
 
     /**
-     * @var array
+     * @var Dot
      */
     protected $data;
 
@@ -37,7 +38,7 @@ class Entry implements EntryInterface
         $this->filePath      = $filePath;
         $this->contentParser = $contentParser;
 
-        $this->data = $entryParser->parseEntry($this->filePath);
+        $this->data = new Dot($entryParser->parseEntry($this->filePath));
     }
 
     /**
@@ -65,11 +66,17 @@ class Entry implements EntryInterface
     }
 
     /**
-     * @return array
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
      */
-    public function data()
+    public function data($key = '', $default = null)
     {
-        return $this->data;
+        if ($key) {
+            return $this->data->get($key, $default);
+        }
+
+        return $this->data->all();
     }
 
     /**
@@ -90,6 +97,10 @@ class Entry implements EntryInterface
      */
     public function url()
     {
+        if ($this->data->has('url')) {
+            return $this->data('url');
+        }
+
         $slug = $this->slug();
 
         if (substr_compare($this->slug(), 'index', -strlen('index')) === 0) {
@@ -104,11 +115,11 @@ class Entry implements EntryInterface
      */
     public function content()
     {
-        if (isset($this->data['content'])) {
-            return $this->data['content'];
+        if ($this->data->has('content')) {
+            return $this->data('content');
         }
 
-        return $this->contentParser->toHtml($this->data['content_raw']);
+        return $this->contentParser->toHtml($this->data('content_raw'));
     }
 
     /**
@@ -117,6 +128,10 @@ class Entry implements EntryInterface
      */
     public function excerpt($length = 300)
     {
+        if ($this->data->has('excerpt')) {
+            return $this->data('excerpt');
+        }
+
         $content = $this->content();
         if (!$content) {
             return $content;
