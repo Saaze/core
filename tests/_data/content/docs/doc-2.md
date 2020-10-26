@@ -1,3 +1,4 @@
+---
 title: Documentation 2
 order: 2
 ---

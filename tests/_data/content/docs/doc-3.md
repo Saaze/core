@@ -1,3 +1,4 @@
+---
 title: Documentation 3
 order: 3
 ---
