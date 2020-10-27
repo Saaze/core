@@ -40,12 +40,14 @@ class TemplateManager implements TemplateManagerInterface
             $template = $collection->slug() . '/index';
         }
 
-        $page    = filter_var($page, FILTER_SANITIZE_NUMBER_INT);
-        $perPage = container()->get('config.entries_per_page');
+        $entries    = $this->entryManager->getEntriesForTemplate();
+        $page       = filter_var($page, FILTER_SANITIZE_NUMBER_INT);
+        $perPage    = container()->get('config.entries_per_page');
+        $pagination = $this->entryManager->paginateEntriesForTemplate($entries, $page, $perPage);
 
         return $this->templateParser->render($template, [
-            'collection' => $collection->data(),
-            'entries'    => $this->entryManager->getEntriesForTemplate($page, $perPage),
+            'collection' => $this->toObject($collection->data()),
+            'pagination' => $this->toObject($pagination),
         ]);
     }
 
@@ -66,9 +68,12 @@ class TemplateManager implements TemplateManagerInterface
             $template = $entry->getCollection()->slug() . '/entry';
         }
 
+        $collection    = $entry->getCollection() ? $entry->getCollection()->data() : [];
+        $templateEntry = $this->entryManager->getEntryForTemplate($entry);
+
         return $this->templateParser->render($template, [
-            'collection' => $entry->getCollection() ? $entry->getCollection()->data() : null,
-            'entry'      => $this->entryManager->getEntryForTemplate($entry),
+            'collection' => $this->toObject($collection),
+            'entry'      => $this->toObject($templateEntry),
         ]);
     }
 
@@ -92,5 +97,14 @@ class TemplateManager implements TemplateManagerInterface
             'message' => $message,
             'code'    => $code,
         ]);
+    }
+
+    /**
+     * @param array $array
+     * @return array
+     */
+    protected function toObject($array)
+    {
+        return json_decode(json_encode($array, JSON_FORCE_OBJECT));
     }
 }

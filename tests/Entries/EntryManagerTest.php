@@ -87,31 +87,40 @@ class EntryManagerTest extends TestCase
 
     public function testGetEntriesForTemplate()
     {
-        $entries = $this->entryManager->getEntriesForTemplate(1, 10);
+        $entries = $this->entryManager->getEntriesForTemplate();
 
-        $this->assertEquals(1, $entries['currentPage']);
-        $this->assertEquals(1, $entries['prevPage']);
-        $this->assertEquals(2, $entries['nextPage']);
-        $this->assertEquals('', $entries['prevUrl']);
-        $this->assertEquals('/blog/page/2', $entries['nextUrl']);
-        $this->assertEquals(10, $entries['perPage']);
-        $this->assertEquals(20, $entries['totalEntries']);
-        $this->assertEquals(2, $entries['totalPages']);
-        $this->assertIsArray($entries['entries']);
-        $this->assertEquals(10, count($entries['entries']));
+        $this->assertIsArray($entries);
+        $this->assertEquals(20, count($entries));
+    }
 
-        $entries = $this->entryManager->getEntriesForTemplate(3, 5);
+    public function testPaginateEntriesForTemplate()
+    {
+        $entries    = $this->entryManager->getEntriesForTemplate();
+        $pagination = $this->entryManager->paginateEntriesForTemplate($entries, 1, 10);
 
-        $this->assertEquals(3, $entries['currentPage']);
-        $this->assertEquals(2, $entries['prevPage']);
-        $this->assertEquals(4, $entries['nextPage']);
-        $this->assertEquals('/blog/page/2', $entries['prevUrl']);
-        $this->assertEquals('/blog/page/4', $entries['nextUrl']);
-        $this->assertEquals(5, $entries['perPage']);
-        $this->assertEquals(20, $entries['totalEntries']);
-        $this->assertEquals(4, $entries['totalPages']);
-        $this->assertIsArray($entries['entries']);
-        $this->assertEquals(5, count($entries['entries']));
+        $this->assertEquals(1, $pagination['currentPage']);
+        $this->assertEquals(1, $pagination['prevPage']);
+        $this->assertEquals(2, $pagination['nextPage']);
+        $this->assertEquals('', $pagination['prevUrl']);
+        $this->assertEquals('/blog/page/2', $pagination['nextUrl']);
+        $this->assertEquals(10, $pagination['perPage']);
+        $this->assertEquals(20, $pagination['totalEntries']);
+        $this->assertEquals(2, $pagination['totalPages']);
+        $this->assertIsArray($pagination['entries']);
+        $this->assertEquals(10, count($pagination['entries']));
+
+        $pagination = $this->entryManager->paginateEntriesForTemplate($entries, 3, 5);
+
+        $this->assertEquals(3, $pagination['currentPage']);
+        $this->assertEquals(2, $pagination['prevPage']);
+        $this->assertEquals(4, $pagination['nextPage']);
+        $this->assertEquals('/blog/page/2', $pagination['prevUrl']);
+        $this->assertEquals('/blog/page/4', $pagination['nextUrl']);
+        $this->assertEquals(5, $pagination['perPage']);
+        $this->assertEquals(20, $pagination['totalEntries']);
+        $this->assertEquals(4, $pagination['totalPages']);
+        $this->assertIsArray($pagination['entries']);
+        $this->assertEquals(5, count($pagination['entries']));
     }
 
     public function testGetEntryForTemplate()

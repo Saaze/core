@@ -133,13 +133,27 @@ class EntryManager implements EntryManagerInterface
     }
 
     /**
+     * @return array
+     */
+    public function getEntriesForTemplate()
+    {
+        $entries = $this->getEntries();
+
+        $entries = array_map(function ($entry) {
+            return $this->getEntryForTemplate($entry);
+        }, $entries);
+
+        return $entries;
+    }
+
+    /**
+     * @param array $entries
      * @param int $page
      * @param int $perPage
      * @return array
      */
-    public function getEntriesForTemplate($page, $perPage)
+    public function paginateEntriesForTemplate($entries, $page, $perPage)
     {
-        $entries      = $this->getEntries();
         $totalEntries = count($entries);
 
         if ($page < 1) {
@@ -159,10 +173,6 @@ class EntryManager implements EntryManagerInterface
         if (isset($chunkedEntries[$pageIndex])) {
             $pageEntries = $chunkedEntries[$pageIndex];
         }
-
-        $pageEntries = array_map(function ($entry) {
-            return $this->getEntryForTemplate($entry);
-        }, $pageEntries);
 
         return [
             'currentPage'  => $page,

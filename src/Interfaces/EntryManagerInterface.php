@@ -28,13 +28,21 @@ interface EntryManagerInterface
     public function getEntry($slug);
 
     /**
-     * Return a paginated set of entry results for a template
+     * Return all of the entries for a template
      *
+     * @return array
+     */
+    public function getEntriesForTemplate();
+
+    /**
+     * Paginate a set of entries for a template
+     *
+     * @param array $entries
      * @param int $page
      * @param int $perPage
      * @return array
      */
-    public function getEntriesForTemplate($page, $perPage);
+    public function paginateEntriesForTemplate($entries, $page, $perPage);
 
     /**
      * Return an entry for a template
