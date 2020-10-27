@@ -44,7 +44,7 @@ class MakeEntryCommand extends MakeCommand
 
         $data    = ['title' => $title ?: $id];
         $yaml    = Yaml::dump($data);
-        $content = "$yaml\n---\n";
+        $content = "---\n$yaml---\n";
 
         file_put_contents(content_path() . "/{$collection}/{$id}.md", $content);
 
