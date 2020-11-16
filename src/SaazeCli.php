@@ -3,6 +3,7 @@
 namespace Saaze;
 
 use Dotenv\Dotenv;
+use Saaze\Container\Container;
 use Symfony\Component\Console\Application;
 
 class SaazeCli
@@ -22,6 +23,7 @@ class SaazeCli
 
     public function run()
     {
+        Container::bootProviders();
         $container = container();
 
         $app = new Application('Saaze');

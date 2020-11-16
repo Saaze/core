@@ -3,6 +3,7 @@
 namespace Saaze;
 
 use Dotenv\Dotenv;
+use Saaze\Container\Container;
 
 class Saaze
 {
@@ -24,6 +25,7 @@ class Saaze
      */
     public function run()
     {
+        Container::bootProviders();
         container()->call([\Saaze\Interfaces\RouterInterface::class, 'handle']);
     }
 }

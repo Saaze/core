@@ -18,7 +18,16 @@ class Container
 
     protected function __construct()
     {
+        $definitions = [
+            'providers' => $this->getProviders(),
+        ];
+
+        foreach ($definitions['providers'] as $key => $value) {
+            $definitions['providers'][$key] = \DI\autowire($value);
+        }
+
         $definitions = array_merge(
+            $definitions,
             $this->getInterfaceDefenitions(),
             $this->getCustomDefenitions()
         );
@@ -52,6 +61,39 @@ class Container
         }
 
         return static::$instance->container;
+    }
+
+    /**
+     * Boot the application service providers.
+     *
+     * @return void
+     */
+    public static function bootProviders()
+    {
+        foreach (self::getInstance()->get('providers') as $provider) {
+            $provider->boot();
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getProviders()
+    {
+        $providers = [
+            \Saaze\Providers\SaazeServiceProvider::class,
+        ];
+
+        if (!file_exists(SAAZE_PATH . '/providers.php')) {
+            return $providers;
+        }
+
+        $customProviders = require_once(SAAZE_PATH . '/providers.php');
+        if (is_array($customProviders)) {
+            $providers = array_merge($providers, $customProviders);
+        }
+
+        return $providers;
     }
 
     /**
