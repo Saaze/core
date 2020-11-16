@@ -6,6 +6,7 @@ use Mimey\MimeTypes;
 use Symfony\Component\Routing;
 use Saaze\Interfaces\CollectionManagerInterface;
 use Saaze\Interfaces\EntryManagerInterface;
+use Saaze\Interfaces\RouteInterface;
 use Saaze\Interfaces\RouterInterface;
 use Saaze\Interfaces\TemplateManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,8 +52,7 @@ class Router implements RouterInterface
             return $response->send();
         }
 
-        $routes = new Routing\RouteCollection();
-        $routes->addCollection($this->getCollectionRoutes());
+        $routes = $this->getRoutesFromProviders();
 
         $context = new Routing\RequestContext();
         $context->fromRequest($request);
@@ -73,29 +73,28 @@ class Router implements RouterInterface
     /**
      * @return Routing\RouteCollection
      */
-    protected function getCollectionRoutes()
+    protected function getRoutesFromProviders()
     {
-        $routes = new Routing\RouteCollection();
-        $collections = $this->collectionManager->getCollections();
+        $routeCollection = new Routing\RouteCollection();
+        $routes          = [];
 
-        foreach ($collections as $collection) {
-            if ($collection->indexRoute()) {
-                if ($collection->indexIsEntry()) {
-                    $routes->add("{$collection->slug()}_index_entry", new Routing\Route($collection->indexRoute(), ['collection' => $collection->slug(), 'slug' => 'index']));
-                } else {
-                    $routes->add("{$collection->slug()}_index", new Routing\Route($collection->indexRoute(), ['collection' => $collection->slug()]));
-                }
-
-                $routes->add("{$collection->slug()}_page", new Routing\Route($collection->indexRoute() . '/page/{page}', ['collection' => $collection->slug()]));
-            }
-            if ($collection->entryRoute()) {
-                $routes->add("{$collection->slug()}_entry", new Routing\Route($collection->entryRoute(), ['collection' => $collection->slug()], [
-                    'slug' => '.+',
-                ]));
+        foreach (container()->get('providers') as $provider) {
+            if (method_exists($provider, 'getRoutes')) {
+                $routes = array_merge($routes, $provider->getRoutes());
             }
         }
 
-        return $routes;
+        foreach ($routes as $route) {
+            if (!is_subclass_of($route, RouteInterface::class)) {
+                continue;
+            }
+
+            $routerRoute = new Routing\Route($route->path(), $route->params(), $route->requirements());
+
+            $routeCollection->add($route->path(), $routerRoute);
+        }
+
+        return $routeCollection;
     }
 
     /**
