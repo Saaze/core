@@ -109,6 +109,7 @@ class Container
             \Saaze\Interfaces\CollectionManagerInterface::class => \Saaze\Collections\CollectionManager::class,
             \Saaze\Interfaces\CollectionParserInterface::class  => \Saaze\Collections\CollectionParser::class,
             \Saaze\Interfaces\ContentParserInterface::class     => \Saaze\Content\MarkdownContentParser::class,
+            \Saaze\Interfaces\RouteInterface::class             => \Saaze\Routing\Route::class,
             \Saaze\Interfaces\RouterInterface::class            => \Saaze\Routing\Router::class,
             \Saaze\Interfaces\TemplateManagerInterface::class   => \Saaze\Templates\TemplateManager::class,
             \Saaze\Interfaces\TemplateParserInterface::class    => \Saaze\Templates\BladeTemplateParser::class,
