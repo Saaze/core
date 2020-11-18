@@ -18,37 +18,16 @@ class Container
 
     protected function __construct()
     {
-        $definitions = [
-            'providers' => $this->getProviders(),
-        ];
-
-        foreach ($definitions['providers'] as $key => $value) {
-            $definitions['providers'][$key] = \DI\autowire($value);
+        if (!defined('SAAZE_PATH')) {
+            throw new \Exception('SAAZE_PATH is not defined');
         }
-
-        $definitions = array_merge(
-            $definitions,
-            $this->getInterfaceDefenitions(),
-            $this->getCustomDefenitions()
-        );
-
-        foreach ($definitions as $key => $value) {
-            if (is_string($value)) {
-                $definitions[$key] = \DI\autowire($value);
-            }
-        }
-
-        $definitions = array_merge(
-            $definitions,
-            $this->getPathDefenitions(),
-            $this->getConfigDefenitions()
-        );
 
         $builder = new ContainerBuilder();
         $builder->useAnnotations(false);
-        $builder->addDefinitions($definitions);
-
         $this->container = $builder->build();
+
+        $this->resolveProviders();
+        $this->registerProviders();
     }
 
     /**
@@ -64,15 +43,17 @@ class Container
     }
 
     /**
-     * Boot the application service providers.
-     *
      * @return void
      */
-    public static function bootProviders()
+    protected function resolveProviders()
     {
-        foreach (self::getInstance()->get('providers') as $provider) {
-            $provider->boot();
+        $providers = [];
+
+        foreach ($this->getProviders() as $providerClass) {
+            $providers[] = new $providerClass($this->container);
         }
+
+        $this->container->set('providers', $providers);
     }
 
     /**
@@ -84,80 +65,46 @@ class Container
             \Saaze\Providers\SaazeServiceProvider::class,
         ];
 
-        if (!file_exists(SAAZE_PATH . '/providers.php')) {
+        if (!file_exists(SAAZE_PATH . '/bootstrap.php')) {
             return $providers;
         }
 
-        $customProviders = require_once(SAAZE_PATH . '/providers.php');
-        if (is_array($customProviders)) {
-            $providers = array_merge($providers, $customProviders);
+        $bootstrap = require_once(SAAZE_PATH . '/bootstrap.php');
+        if (!empty($bootstrap['providers']) && is_array($bootstrap['providers'])) {
+            $providers = array_merge($providers, $bootstrap['providers']);
         }
 
         return $providers;
     }
 
     /**
-     * @return array
+     * @return void
      */
-    protected function getInterfaceDefenitions()
+    protected function registerProviders()
     {
-        return [
-            \Saaze\Interfaces\EntryInterface::class             => \Saaze\Entries\Entry::class,
-            \Saaze\Interfaces\EntryManagerInterface::class      => \Saaze\Entries\EntryManager::class,
-            \Saaze\Interfaces\EntryParserInterface::class       => \Saaze\Entries\EntryParser::class,
-            \Saaze\Interfaces\CollectionInterface::class        => \Saaze\Collections\Collection::class,
-            \Saaze\Interfaces\CollectionManagerInterface::class => \Saaze\Collections\CollectionManager::class,
-            \Saaze\Interfaces\CollectionParserInterface::class  => \Saaze\Collections\CollectionParser::class,
-            \Saaze\Interfaces\ContentParserInterface::class     => \Saaze\Content\MarkdownContentParser::class,
-            \Saaze\Interfaces\RouteInterface::class             => \Saaze\Routing\Route::class,
-            \Saaze\Interfaces\RouterInterface::class            => \Saaze\Routing\Router::class,
-            \Saaze\Interfaces\TemplateManagerInterface::class   => \Saaze\Templates\TemplateManager::class,
-            \Saaze\Interfaces\TemplateParserInterface::class    => \Saaze\Templates\BladeTemplateParser::class,
-        ];
+        foreach ($this->container->get('providers') as $provider) {
+            $provider->register();
+
+            foreach ($provider->getBindings() as $key => $value) {
+                if (is_string($value)) {
+                    $this->container->set($key, \DI\autowire($value));
+                }
+            }
+            foreach ($provider->getConfig() as $key => $value) {
+                $this->container->set($key, $value);
+            }
+        }
     }
 
     /**
-     * @return array
+     * @return void
      */
-    protected function getCustomDefenitions()
+    public static function bootProviders()
     {
-        if (!file_exists(SAAZE_PATH . '/definitions.php')) {
-            return [];
+
+        foreach (self::getInstance()->get('providers') as $provider) {
+            $provider->boot();
+
         }
-
-        $defenitions = require_once(SAAZE_PATH . '/definitions.php');
-        if (!is_array($defenitions)) {
-            return [];
-        }
-
-        return $defenitions;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getPathDefenitions()
-    {
-        if (!defined('SAAZE_PATH')) {
-            throw new \Exception('SAAZE_PATH is not defined');
-        }
-
-        return [
-            'path.base'      => SAAZE_PATH,
-            'path.cache'     => SAAZE_PATH . '/' . ($_ENV['CACHE_PATH']     ?? 'cache'),
-            'path.content'   => SAAZE_PATH . '/' . ($_ENV['CONTENT_PATH']   ?? 'content'),
-            'path.public'    => SAAZE_PATH . '/' . ($_ENV['PUBLIC_PATH']    ?? 'public'),
-            'path.templates' => SAAZE_PATH . '/' . ($_ENV['TEMPLATES_PATH'] ?? 'templates'),
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    protected function getConfigDefenitions()
-    {
-        return [
-            'config.entries_per_page' => $_ENV['ENTRIES_PER_PAGE'] ?? 10,
-        ];
     }
 }

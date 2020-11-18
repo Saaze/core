@@ -2,8 +2,6 @@
 
 namespace Saaze\Providers;
 
-use Saaze\Container\Container;
-
 abstract class ServiceProvider
 {
     /**
@@ -14,11 +12,34 @@ abstract class ServiceProvider
     /**
      * @var array
      */
+    private $bindings = [];
+
+    /**
+     * @var array
+     */
+    private $config = [];
+
+    /**
+     * @var array
+     */
     private $routes = [];
 
-    public function __construct()
+    /**
+     * @param \DI\Container $container
+     */
+    public function __construct($container)
     {
-        $this->container = Container::getInstance();
+        $this->container = $container;
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        //
     }
 
     /**
@@ -26,7 +47,52 @@ abstract class ServiceProvider
      *
      * @return void
      */
-    abstract public function boot();
+    public function boot()
+    {
+        //
+    }
+
+    /**
+     * Add bindings to this service provider.
+     *
+     * @param array $bindings
+     * @return void
+     */
+    public function setBindings($bindings)
+    {
+        $this->bindings = $bindings;
+    }
+
+    /**
+     * Get the bindings for this service provider.
+     *
+     * @return array
+     */
+    public function getBindings()
+    {
+        return $this->bindings;
+    }
+
+    /**
+     * Add config values to this service provider.
+     *
+     * @param array $config
+     * @return void
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
+    }
+
+    /**
+     * Get the config values for this service provider.
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
 
     /**
      * Add routes to this service provider.
