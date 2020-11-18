@@ -101,10 +101,14 @@ class Container
      */
     public static function bootProviders()
     {
+        $routes = [];
 
         foreach (self::getInstance()->get('providers') as $provider) {
             $provider->boot();
 
+            $routes = array_merge($routes, $provider->getRoutes());
         }
+
+        self::getInstance()->set('routes', $routes);
     }
 }

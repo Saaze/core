@@ -76,13 +76,7 @@ class Router implements RouterInterface
     protected function getRoutesFromProviders()
     {
         $routeCollection = new Routing\RouteCollection();
-        $routes          = [];
-
-        foreach (container()->get('providers') as $provider) {
-            if (method_exists($provider, 'getRoutes')) {
-                $routes = array_merge($routes, $provider->getRoutes());
-            }
-        }
+        $routes          = container()->get('routes');
 
         foreach ($routes as $route) {
             if (!is_subclass_of($route, RouteInterface::class)) {
