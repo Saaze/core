@@ -12,6 +12,7 @@ use Saaze\Interfaces\TemplateManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpKernel;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class Router implements RouterInterface
@@ -129,6 +130,16 @@ class Router implements RouterInterface
      */
     protected function handleRoute($request)
     {
+        if ($request->attributes->has('_controller')) {
+            $controllerResolver = new HttpKernel\Controller\ControllerResolver();
+            $argumentResolver   = new HttpKernel\Controller\ArgumentResolver();
+
+            $controller = $controllerResolver->getController($request);
+            $arguments  = $argumentResolver->getArguments($request, $controller);
+
+            return call_user_func_array($controller, $arguments);
+        }
+
         if (!$request->attributes->has('collection')) {
             throw new ResourceNotFoundException('Collection not found');
         }
