@@ -71,3 +71,19 @@ if (!function_exists('templates_path')) {
         return container()->get('path.templates');
     }
 }
+
+if (!function_exists('response')) {
+    /**
+     * Create a response
+     *
+     * @return \Saaze\Interfaces\ResponseInterface
+     */
+    function response(string $content = '', int $status = 200, array $headers = [])
+    {
+        return container()->make(\Saaze\Interfaces\ResponseInterface::class, [
+            'content' => $content,
+            'status'  => $status,
+            'headers' => $headers,
+        ]);
+    }
+}
