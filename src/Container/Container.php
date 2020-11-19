@@ -109,6 +109,10 @@ class Container
             $routes = array_merge($routes, $provider->getRoutes());
         }
 
+        usort($routes, function ($a, $b) {
+            return $b->priority() <=> $a->priority();
+        });
+
         self::getInstance()->set('routes', $routes);
     }
 }
