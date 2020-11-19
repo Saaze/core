@@ -59,8 +59,8 @@ class Router implements RouterInterface
         $matcher = new Routing\Matcher\UrlMatcher($routes, $context);
 
         try {
-            $route    = $matcher->match($request->getPathInfo());
-            $response = $this->handleRoute($route);
+            $request->attributes->add($matcher->match($request->getPathInfo()));
+            $response = $this->handleRoute($request);
         } catch (ResourceNotFoundException $e) {
             $response = new Response($this->templateManager->renderError('Not Found', 404), 404);
         } catch (\Exception $e) {
@@ -123,29 +123,29 @@ class Router implements RouterInterface
     }
 
     /**
-     * @param array $route
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\Routing\Exception\ResourceNotFoundException
      */
-    protected function handleRoute($route)
+    protected function handleRoute($request)
     {
-        if (empty($route['collection'])) {
+        if (!$request->attributes->has('collection')) {
             throw new ResourceNotFoundException('Collection not found');
         }
 
-        $collection = $this->collectionManager->getCollection($route['collection']);
+        $collection = $this->collectionManager->getCollection($request->attributes->get('collection'));
         if (!$collection) {
             throw new ResourceNotFoundException('Collection not found');
         }
 
-        if (empty($route['slug'])) {
-            $page = $route['page'] ?? 1;
+        if (!$request->attributes->has('slug')) {
+            $page = $request->attributes->get('page', 1);
             return new Response($this->templateManager->renderCollection($collection, $page));
         }
 
         $this->entryManager->setCollection($collection);
 
-        $entry = $this->entryManager->getEntry($route['slug']);
+        $entry = $this->entryManager->getEntry($request->attributes->get('slug'));
         if (!$entry) {
             throw new ResourceNotFoundException('Entry not found');
         }
