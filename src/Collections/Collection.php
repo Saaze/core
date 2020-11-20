@@ -20,11 +20,6 @@ class Collection implements CollectionInterface
     protected $data;
 
     /**
-     * @var array
-     */
-    protected $entries;
-
-    /**
      * @param string $filePath
      */
     public function __construct($filePath, CollectionParserInterface $collectionParser)
