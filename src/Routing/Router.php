@@ -131,7 +131,7 @@ class Router implements RouterInterface
     protected function handleRoute($request)
     {
         if ($request->attributes->has('_controller')) {
-            $controllerResolver = new HttpKernel\Controller\ControllerResolver();
+            $controllerResolver = new ControllerResolver();
             $argumentResolver   = new HttpKernel\Controller\ArgumentResolver();
 
             $controller = $controllerResolver->getController($request);
