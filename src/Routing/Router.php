@@ -63,9 +63,9 @@ class Router implements RouterInterface
             $request->attributes->add($matcher->match($request->getPathInfo()));
             $response = $this->handleRoute($request);
         } catch (ResourceNotFoundException $e) {
-            $response = new Response($this->templateManager->renderError('Not Found', 404), 404);
+            $response = new Response($this->templateManager->renderError('Not Found', 404, $e), 404);
         } catch (\Exception $e) {
-            $response = new Response($this->templateManager->renderError('Internal Server Error', 500), 500);
+            $response = new Response($this->templateManager->renderError('Internal Server Error', 500, $e), 500);
         }
 
         $response->send();

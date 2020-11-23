@@ -80,10 +80,19 @@ class TemplateManager implements TemplateManagerInterface
     /**
      * @param string $message
      * @param int $code
+     * @param \Exception|null $exception
      * @return string
      */
-    public function renderError($message, $code)
+    public function renderError($message, $code, $exception = null)
     {
+        if (container()->get('config.debug') && $exception) {
+            $whoops = new \Whoops\Run;
+            $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+            $whoops->register();
+
+            return $whoops->handleException($exception);
+        }
+
         $template = 'error';
         if ($this->templateParser->templateExists("error{$code}")) {
             $template = "error{$code}";

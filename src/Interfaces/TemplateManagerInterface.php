@@ -26,7 +26,8 @@ interface TemplateManagerInterface
      *
      * @param string $message
      * @param int $code
+     * @param \Exception|null $exception
      * @return string
      */
-    public function renderError($message, $code);
+    public function renderError($message, $code, $exception = null);
 }
