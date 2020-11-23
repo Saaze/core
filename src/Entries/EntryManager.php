@@ -196,6 +196,7 @@ class EntryManager implements EntryManagerInterface
         $entry->setCollection($this->collection);
         $entryData = $entry->data();
 
+        $entryData['slug']    = $entry->slug();
         $entryData['url']     = $entry->url();
         $entryData['content'] = $entry->content();
         $entryData['excerpt'] = $entry->excerpt();
