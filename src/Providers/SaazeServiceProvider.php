@@ -60,6 +60,7 @@ class SaazeServiceProvider extends ServiceProvider
             'path.content'            => SAAZE_PATH . '/' . ($_ENV['CONTENT_PATH']   ?? 'content'),
             'path.public'             => SAAZE_PATH . '/' . ($_ENV['PUBLIC_PATH']    ?? 'public'),
             'path.templates'          => SAAZE_PATH . '/' . ($_ENV['TEMPLATES_PATH'] ?? 'templates'),
+            'config.debug'            => $_ENV['DEBUG'] ?? false,
             'config.entries_per_page' => $_ENV['ENTRIES_PER_PAGE'] ?? 10,
         ]);
     }
