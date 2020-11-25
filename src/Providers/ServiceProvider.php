@@ -5,14 +5,9 @@ namespace Saaze\Providers;
 abstract class ServiceProvider
 {
     /**
-     * @var \DI\Container
-     */
-    protected $container;
-
-    /**
      * @var array
      */
-    private $bindings = [];
+    protected $bindings = [];
 
     /**
      * @var array
@@ -23,14 +18,6 @@ abstract class ServiceProvider
      * @var array
      */
     private $routes = [];
-
-    /**
-     * @param \DI\Container $container
-     */
-    public function __construct($container)
-    {
-        $this->container = $container;
-    }
 
     /**
      * Register any application services.
@@ -53,18 +40,7 @@ abstract class ServiceProvider
     }
 
     /**
-     * Add bindings to this service provider.
-     *
-     * @param array $bindings
-     * @return void
-     */
-    public function setBindings($bindings)
-    {
-        $this->bindings = $bindings;
-    }
-
-    /**
-     * Get the bindings for this service provider.
+     * Get the bindings.
      *
      * @return array
      */
@@ -74,18 +50,17 @@ abstract class ServiceProvider
     }
 
     /**
-     * Add config values to this service provider.
+     * Add items to the config.
      *
-     * @param array $config
-     * @return void
+     * @return array
      */
-    public function setConfig($config)
+    public function addConfig($config)
     {
-        $this->config = $config;
+        $this->config = array_merge($this->config, $config);
     }
 
     /**
-     * Get the config values for this service provider.
+     * Get the config.
      *
      * @return array
      */
@@ -95,18 +70,26 @@ abstract class ServiceProvider
     }
 
     /**
-     * Add routes to this service provider.
+     * Add a route.
      *
-     * @param array $routes
+     * @param string $method
+     * @param string $path
+     * @param callable|string $handler
+     * @param integer $priority
      * @return void
      */
-    public function setRoutes($routes)
+    public function addRoute($method, $path, $handler, $priority = 0)
     {
-        $this->routes = $routes;
+        $this->routes[$method.$path] = [
+            'method'   => $method,
+            'path'     => $path,
+            'handler'  => $handler,
+            'priority' => $priority,
+        ];
     }
 
     /**
-     * Get the routes for this service provider.
+     * Get the routes.
      *
      * @return array
      */

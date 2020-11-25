@@ -8,14 +8,31 @@ use Saaze\Interfaces\RouteInterface;
 class SaazeServiceProvider extends ServiceProvider
 {
     /**
+     * @var array
+     */
+    protected $bindings = [
+        \Saaze\Interfaces\EntryInterface::class             => \Saaze\Entries\Entry::class,
+        \Saaze\Interfaces\EntryManagerInterface::class      => \Saaze\Entries\EntryManager::class,
+        \Saaze\Interfaces\EntryParserInterface::class       => \Saaze\Entries\EntryParser::class,
+        \Saaze\Interfaces\CollectionInterface::class        => \Saaze\Collections\Collection::class,
+        \Saaze\Interfaces\CollectionManagerInterface::class => \Saaze\Collections\CollectionManager::class,
+        \Saaze\Interfaces\CollectionParserInterface::class  => \Saaze\Collections\CollectionParser::class,
+        \Saaze\Interfaces\ContentParserInterface::class     => \Saaze\Content\MarkdownContentParser::class,
+        \Saaze\Interfaces\ResponseInterface::class          => \Saaze\Routing\Response::class,
+        \Saaze\Interfaces\RouteInterface::class             => \Saaze\Routing\Route::class,
+        \Saaze\Interfaces\RouterInterface::class            => \Saaze\Routing\Router::class,
+        \Saaze\Interfaces\TemplateManagerInterface::class   => \Saaze\Templates\TemplateManager::class,
+        \Saaze\Interfaces\TemplateParserInterface::class    => \Saaze\Templates\BladeTemplateParser::class,
+    ];
+
+    /**
      * Register any application services.
      *
      * @return void
      */
     public function register()
     {
-        $this->saazeBindings();
-        $this->saazeConfig();
+        $this->setUpConfig();
     }
 
     /**
@@ -25,36 +42,15 @@ class SaazeServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->saazeRoutes();
+        $this->setUpRoutes();
     }
 
     /**
      * @return void
      */
-    protected function saazeBindings()
+    protected function setUpConfig()
     {
-        $this->setBindings([
-            \Saaze\Interfaces\EntryInterface::class             => \Saaze\Entries\Entry::class,
-            \Saaze\Interfaces\EntryManagerInterface::class      => \Saaze\Entries\EntryManager::class,
-            \Saaze\Interfaces\EntryParserInterface::class       => \Saaze\Entries\EntryParser::class,
-            \Saaze\Interfaces\CollectionInterface::class        => \Saaze\Collections\Collection::class,
-            \Saaze\Interfaces\CollectionManagerInterface::class => \Saaze\Collections\CollectionManager::class,
-            \Saaze\Interfaces\CollectionParserInterface::class  => \Saaze\Collections\CollectionParser::class,
-            \Saaze\Interfaces\ContentParserInterface::class     => \Saaze\Content\MarkdownContentParser::class,
-            \Saaze\Interfaces\ResponseInterface::class          => \Saaze\Routing\Response::class,
-            \Saaze\Interfaces\RouteInterface::class             => \Saaze\Routing\Route::class,
-            \Saaze\Interfaces\RouterInterface::class            => \Saaze\Routing\Router::class,
-            \Saaze\Interfaces\TemplateManagerInterface::class   => \Saaze\Templates\TemplateManager::class,
-            \Saaze\Interfaces\TemplateParserInterface::class    => \Saaze\Templates\BladeTemplateParser::class,
-        ]);
-    }
-
-    /**
-     * @return void
-     */
-    protected function saazeConfig()
-    {
-        $this->setConfig([
+        $this->addConfig([
             'path.base'               => SAAZE_PATH,
             'path.cache'              => SAAZE_PATH . '/' . ($_ENV['CACHE_PATH']     ?? 'cache'),
             'path.content'            => SAAZE_PATH . '/' . ($_ENV['CONTENT_PATH']   ?? 'content'),
@@ -68,40 +64,19 @@ class SaazeServiceProvider extends ServiceProvider
     /**
      * @return void
      */
-    protected function saazeRoutes()
+    protected function setUpRoutes()
     {
-        $collectionManager = $this->container->get(CollectionManagerInterface::class);
+        $collectionManager = container()->get(CollectionManagerInterface::class);
         $collections       = $collectionManager->getCollections();
-        $routes            = [];
 
         foreach ($collections as $collection) {
             if ($collection->indexRoute()) {
-                if ($collection->indexIsEntry()) {
-                    $routes[] = $this->container->make(RouteInterface::class, [
-                        'path'   => $collection->indexRoute(),
-                        'params' => ['collection' => $collection->slug(), 'slug' => 'index'],
-                    ]);
-                } else {
-                    $routes[] = $this->container->make(RouteInterface::class, [
-                        'path'   => $collection->indexRoute(),
-                        'params' => ['collection' => $collection->slug()],
-                    ]);
-                }
-
-                $routes[] = $this->container->make(RouteInterface::class, [
-                    'path'   => $collection->indexRoute() . '/page/{page}',
-                    'params' => ['collection' => $collection->slug()],
-                ]);
+                $this->addRoute('GET', $collection->indexRoute(), [\Saaze\Controllers\CollectionController::class, 'index']);
+                $this->addRoute('GET', $collection->indexRoute() . '/page/{page}', [\Saaze\Controllers\CollectionController::class, 'index']);
             }
             if ($collection->entryRoute()) {
-                $routes[] = $this->container->make(RouteInterface::class, [
-                    'path'         => $collection->entryRoute(),
-                    'params'       => ['collection' => $collection->slug()],
-                    'requirements' => ['slug' => '.+'],
-                ]);
+                $this->addRoute('GET', $collection->entryRoute(), [\Saaze\Controllers\CollectionController::class, 'entry']);
             }
         }
-
-        $this->setRoutes($routes);
     }
 }

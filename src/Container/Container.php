@@ -121,7 +121,7 @@ class Container
         }
 
         usort($routes, function ($a, $b) {
-            return $b->priority() <=> $a->priority();
+            return ($b['priority'] ?? 0) <=> ($a['priority'] ?? 0);
         });
 
         self::getInstance()->set('routes', $routes);
