@@ -24,10 +24,12 @@ class Container
 
         $builder = new ContainerBuilder();
         $builder->useAnnotations(false);
-        $this->container = $builder->build();
 
-        $this->resolveProviders();
-        $this->registerProviders();
+        $providers   = $this->resolveProviders();
+        $definitions = $this->registerProviders($providers);
+
+        $builder->addDefinitions($definitions);
+        $this->container = $builder->build();
     }
 
     /**
@@ -43,17 +45,17 @@ class Container
     }
 
     /**
-     * @return void
+     * @return array
      */
     protected function resolveProviders()
     {
         $providers = [];
 
         foreach ($this->getProviders() as $providerClass) {
-            $providers[] = new $providerClass($this->container);
+            $providers[] = new $providerClass();
         }
 
-        $this->container->set('providers', $providers);
+        return $providers;
     }
 
     /**
@@ -78,22 +80,31 @@ class Container
     }
 
     /**
+     * @param array $providers
      * @return void
      */
-    protected function registerProviders()
+    protected function registerProviders($providers)
     {
-        foreach ($this->container->get('providers') as $provider) {
+        $definitions = [
+            'providers' => [],
+        ];
+
+        foreach ($providers as $provider) {
             $provider->register();
 
             foreach ($provider->getBindings() as $key => $value) {
                 if (is_string($value)) {
-                    $this->container->set($key, \DI\autowire($value));
+                    $definitions[$key] = \DI\autowire($value);
                 }
             }
             foreach ($provider->getConfig() as $key => $value) {
-                $this->container->set($key, $value);
+                $definitions[$key] = $value;
             }
+
+            $definitions['providers'][] = $provider;
         }
+
+        return $definitions;
     }
 
     /**
