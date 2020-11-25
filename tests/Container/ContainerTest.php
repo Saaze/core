@@ -50,7 +50,7 @@ class ContainerTest extends TestCase
     private function routePaths($routes)
     {
         return array_map(function ($route) {
-            return $route->path();
+            return $route['path'];
         }, $routes);
     }
 }

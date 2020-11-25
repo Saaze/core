@@ -1,7 +1,8 @@
 <?php
 
-use Saaze\Interfaces\RouteInterface;
 use Saaze\Providers\ServiceProvider;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class CustomProvider extends ServiceProvider
 {
@@ -12,7 +13,7 @@ class CustomProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->setConfig([
+        $this->addConfig([
             'config.custom_value' => 'foo',
         ]);
     }
@@ -24,12 +25,10 @@ class CustomProvider extends ServiceProvider
      */
     public function boot()
     {
-        $routes = [
-            $this->container->make(RouteInterface::class, [
-                'path' => '/custom-route',
-            ])
-        ];
-
-        $this->setRoutes($routes);
+        $this->addRoute('GET', '/custom-route', function (ServerRequestInterface $request) : ResponseInterface {
+            $response = new \Laminas\Diactoros\Response;
+            $response->getBody()->write('<h1>Hello, World!</h1>');
+            return $response;
+        });
     }
 }
