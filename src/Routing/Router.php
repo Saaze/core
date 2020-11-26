@@ -68,7 +68,7 @@ class Router implements RouterInterface
         $routes = container()->get('routes');
 
         foreach ($routes as $route) {
-            $router->map($route['method'], $route['path'], $route['handler']);
+            $router->map($route->method(), $route->path(), $route->handler());
         }
 
         return $router;

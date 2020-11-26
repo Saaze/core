@@ -2,6 +2,8 @@
 
 namespace Saaze\Providers;
 
+use Saaze\Interfaces\RouteInterface;
+
 abstract class ServiceProvider
 {
     /**
@@ -72,20 +74,20 @@ abstract class ServiceProvider
     /**
      * Add a route.
      *
-     * @param string $method
      * @param string $path
      * @param callable|string $handler
+     * @param string $method
      * @param integer $priority
      * @return void
      */
-    public function addRoute($method, $path, $handler, $priority = 0)
+    public function addRoute($path, $handler, $method = 'GET', $priority = 0)
     {
-        $this->routes[$method.$path] = [
-            'method'   => $method,
+        $this->routes[$method.$path] = container()->make(RouteInterface::class, [
             'path'     => $path,
             'handler'  => $handler,
+            'method'   => $method,
             'priority' => $priority,
-        ];
+        ]);
     }
 
     /**

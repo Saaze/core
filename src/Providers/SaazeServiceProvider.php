@@ -3,7 +3,6 @@
 namespace Saaze\Providers;
 
 use Saaze\Interfaces\CollectionManagerInterface;
-use Saaze\Interfaces\RouteInterface;
 
 class SaazeServiceProvider extends ServiceProvider
 {
@@ -71,11 +70,11 @@ class SaazeServiceProvider extends ServiceProvider
 
         foreach ($collections as $collection) {
             if ($collection->indexRoute()) {
-                $this->addRoute('GET', $collection->indexRoute(), [\Saaze\Controllers\CollectionController::class, 'index']);
-                $this->addRoute('GET', $collection->indexRoute() . '/page/{page}', [\Saaze\Controllers\CollectionController::class, 'index']);
+                $this->addRoute($collection->indexRoute(), [\Saaze\Controllers\CollectionController::class, 'index']);
+                $this->addRoute($collection->indexRoute() . '/page/{page}', [\Saaze\Controllers\CollectionController::class, 'index']);
             }
             if ($collection->entryRoute()) {
-                $this->addRoute('GET', $collection->entryRoute(), [\Saaze\Controllers\CollectionController::class, 'entry']);
+                $this->addRoute($collection->entryRoute(), [\Saaze\Controllers\CollectionController::class, 'entry']);
             }
         }
     }
