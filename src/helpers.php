@@ -76,14 +76,10 @@ if (!function_exists('response')) {
     /**
      * Create a response
      *
-     * @return \Saaze\Interfaces\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface
      */
     function response(string $content = '', int $status = 200, array $headers = [])
     {
-        return container()->make(\Saaze\Interfaces\ResponseInterface::class, [
-            'content' => $content,
-            'status'  => $status,
-            'headers' => $headers,
-        ]);
+        return new \Laminas\Diactoros\Response\HtmlResponse($content, $status, $headers);
     }
 }
