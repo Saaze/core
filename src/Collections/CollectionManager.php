@@ -76,7 +76,7 @@ class CollectionManager implements CollectionManagerInterface
             return null;
         }
 
-        $collection = container()->make(CollectionInterface::class, ['filePath' => $filePath]);
+        $collection = app()->makeWith(CollectionInterface::class, ['filePath' => $filePath]);
 
         $this->collections[$collection->slug()] = $collection;
 

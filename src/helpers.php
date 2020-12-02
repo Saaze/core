@@ -1,29 +1,5 @@
 <?php
 
-if (!function_exists('container')) {
-    /**
-     * Get the container instance
-     *
-     * @return mixed
-     */
-    function container()
-    {
-        return \Saaze\Container\Container::getInstance();
-    }
-}
-
-if (!function_exists('base_path')) {
-    /**
-     * Get the path to the base of the install
-     *
-     * @return string
-     */
-    function base_path()
-    {
-        return container()->get('path.base');
-    }
-}
-
 if (!function_exists('cache_path')) {
     /**
      * Get the cache path
@@ -32,7 +8,7 @@ if (!function_exists('cache_path')) {
      */
     function cache_path()
     {
-        return container()->get('path.cache');
+        return app()->basePath().'/cache';
     }
 }
 
@@ -44,7 +20,7 @@ if (!function_exists('content_path')) {
      */
     function content_path()
     {
-        return container()->get('path.content');
+        return app()->basePath().'/content';
     }
 }
 
@@ -56,7 +32,7 @@ if (!function_exists('public_path')) {
      */
     function public_path()
     {
-        return container()->get('path.public');
+        return app()->basePath().'/public';
     }
 }
 
@@ -68,22 +44,6 @@ if (!function_exists('templates_path')) {
      */
     function templates_path()
     {
-        return container()->get('path.templates');
-    }
-}
-
-if (!function_exists('response')) {
-    /**
-     * Create a response
-     *
-     * @return \Saaze\Interfaces\ResponseInterface
-     */
-    function response(string $content = '', int $status = 200, array $headers = [])
-    {
-        return container()->make(\Saaze\Interfaces\ResponseInterface::class, [
-            'content' => $content,
-            'status'  => $status,
-            'headers' => $headers,
-        ]);
+        return app()->basePath().'/templates';
     }
 }

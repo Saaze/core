@@ -2,35 +2,22 @@
 
 namespace Saaze;
 
-use Dotenv\Dotenv;
-use Saaze\Container\Container;
-use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
-class SaazeCli
+class SaazeCli extends Saaze
 {
     /**
-     * @param string $saazePath
+     * @return void
      */
-    public function __construct($saazePath)
-    {
-        define('SAAZE_PATH', $saazePath);
-
-        if (file_exists("{$saazePath}/.env")) {
-            $dotenv = Dotenv::createImmutable($saazePath);
-            $dotenv->load();
-        }
-    }
-
     public function run()
     {
-        Container::bootProviders();
-        $container = container();
+        $this->bootstrap();
 
-        $app = new Application('Saaze');
-        $app->add($container->get(\Saaze\Commands\BuildCommand::class));
-        $app->add($container->get(\Saaze\Commands\ServeCommand::class));
-        $app->add($container->get(\Saaze\Commands\Make\MakeCollectionCommand::class));
-        $app->add($container->get(\Saaze\Commands\Make\MakeEntryCommand::class));
-        $app->run();
+        $kernel = $this->app->make(
+            'Illuminate\Contracts\Console\Kernel'
+        );
+
+        exit($kernel->handle(new ArgvInput, new ConsoleOutput));
     }
 }
